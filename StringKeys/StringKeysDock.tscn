@@ -1,0 +1,243 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/StringKeys/StringKeysDock.gd" type="Script" id=1]
+
+[node name="StringKeys" type="ScrollContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+follow_focus = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBox" type="VBoxContainer" parent="."]
+margin_right = 308.0
+margin_bottom = 500.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Grid" type="GridContainer" parent="VBox"]
+margin_right = 308.0
+margin_bottom = 476.0
+columns = 2
+
+[node name="Label_TranslationFile" type="Label" parent="VBox/Grid"]
+margin_top = 5.0
+margin_right = 107.0
+margin_bottom = 19.0
+hint_tooltip = "File name in CSV format.
+If it exists it'll be modified, if it doesn't it'll be created."
+mouse_filter = 1
+text = "Translation File*"
+
+[node name="LineEdit_TranslationFile" type="LineEdit" parent="VBox/Grid"]
+margin_left = 111.0
+margin_right = 308.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+placeholder_text = "res://*.csv"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="Label_FileTypes" type="Label" parent="VBox/Grid"]
+margin_top = 62.0
+margin_right = 107.0
+margin_bottom = 93.0
+hint_tooltip = "List of file types to check, seperated by commas.
+Files must be in text format"
+mouse_filter = 1
+text = "File Types
+to Check*"
+
+[node name="TextEdit_FileTypes" type="TextEdit" parent="VBox/Grid"]
+margin_left = 111.0
+margin_top = 28.0
+margin_right = 308.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 0, 100 )
+text = "tscn, tres, gd, cs,"
+wrap_enabled = true
+caret_blink = true
+
+[node name="Label_PathsToIgnore" type="Label" parent="VBox/Grid"]
+margin_top = 166.0
+margin_right = 107.0
+margin_bottom = 197.0
+hint_tooltip = "Paths from res:// to ignore, seperated by commas"
+mouse_filter = 1
+text = "Paths to
+Ignore"
+
+[node name="TextEdit_PathsToIgnore" type="TextEdit" parent="VBox/Grid"]
+margin_left = 111.0
+margin_top = 132.0
+margin_right = 308.0
+margin_bottom = 232.0
+rect_min_size = Vector2( 0, 100 )
+text = ".git, .import, addons,"
+wrap_enabled = true
+caret_blink = true
+
+[node name="Label_Locales" type="Label" parent="VBox/Grid"]
+margin_top = 279.0
+margin_right = 107.0
+margin_bottom = 293.0
+hint_tooltip = "What language locale codes to include? Seperated by commas.
+Common include:
+en: English
+es: Spanish
+pt: Portuguese
+fr: French
+it: Italian
+de: German
+nl: Dutch
+ru: Russian
+ja: Japanese
+zh: Chinese
+ko: Korean
+Country can also be specified after language such as en_US"
+mouse_filter = 1
+text = "Locales*"
+
+[node name="TextEdit_Locales" type="TextEdit" parent="VBox/Grid"]
+margin_left = 111.0
+margin_top = 236.0
+margin_right = 308.0
+margin_bottom = 336.0
+rect_min_size = Vector2( 0, 100 )
+text = "en, "
+wrap_enabled = true
+caret_blink = true
+
+[node name="Label_Prefix" type="Label" parent="VBox/Grid"]
+margin_top = 345.0
+margin_right = 107.0
+margin_bottom = 359.0
+hint_tooltip = "All strings that start with this will be added as a translation key.
+Should be something that you're sure won't be used on a string that should't be translated such as $$"
+mouse_filter = 1
+text = "Prefix*"
+
+[node name="LineEdit_Prefix" type="LineEdit" parent="VBox/Grid"]
+margin_left = 111.0
+margin_top = 340.0
+margin_right = 308.0
+margin_bottom = 364.0
+size_flags_horizontal = 3
+text = "$$"
+placeholder_text = "Ex: $$, ##, or TR_"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="Label_FirstLocale" type="Label" parent="VBox/Grid"]
+margin_top = 373.0
+margin_right = 107.0
+margin_bottom = 387.0
+hint_tooltip = "Generate an initial translation for the first listed locale from the key (by removing the prefix)"
+mouse_filter = 1
+text = "As First Locale"
+
+[node name="CheckBox_FirstLocale" type="CheckBox" parent="VBox/Grid"]
+margin_left = 284.0
+margin_top = 368.0
+margin_right = 308.0
+margin_bottom = 392.0
+size_flags_horizontal = 8
+pressed = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label_OpenTscnsOnly" type="Label" parent="VBox/Grid"]
+margin_top = 401.0
+margin_right = 107.0
+margin_bottom = 415.0
+hint_tooltip = "Should it only add strings from text scenes currently opened in the editor?"
+mouse_filter = 1
+text = "Open tscns Only"
+
+[node name="CheckBox_OpenTscnsOnly" type="CheckBox" parent="VBox/Grid"]
+margin_left = 284.0
+margin_top = 396.0
+margin_right = 308.0
+margin_bottom = 420.0
+size_flags_horizontal = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label_ClearFile" type="Label" parent="VBox/Grid"]
+margin_top = 429.0
+margin_right = 107.0
+margin_bottom = 443.0
+hint_tooltip = "If set, it will clear the file and generate it from scratch.
+This is good when you haven't manually made any changes and are checking the whole project.
+Faster performance as it doesn't need to check. 
+Backup recommended"
+mouse_filter = 1
+text = "Clear File"
+
+[node name="CheckBox_ClearFile" type="CheckBox" parent="VBox/Grid"]
+margin_left = 284.0
+margin_top = 424.0
+margin_right = 308.0
+margin_bottom = 448.0
+size_flags_horizontal = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
+margin_top = 457.0
+margin_right = 107.0
+margin_bottom = 471.0
+hint_tooltip = "Any keys in the file that aren't found by String Tool in your game will be removed.
+Be careful as there could be ones that are used, but StringTool wasn't set up to find anymore"
+mouse_filter = 1
+text = "Remove Unused"
+
+[node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
+margin_left = 284.0
+margin_top = 452.0
+margin_right = 308.0
+margin_bottom = 476.0
+size_flags_horizontal = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="VBox"]
+margin_top = 480.0
+margin_right = 308.0
+margin_bottom = 500.0
+text = "Create Translation File"
+
+[node name="ProgressBar" type="ProgressBar" parent="VBox"]
+visible = false
+margin_top = -84.0
+margin_right = 170.0
+margin_bottom = -70.0
+
+[node name="ClearFileWarning" type="Label" parent="VBox"]
+visible = false
+margin_top = 372.0
+margin_right = 320.0
+margin_bottom = 420.0
+custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
+text = "WARNING: Clear File will erase all previously made translations and generate a new file. Backup recommended"
+autowrap = true
+
+[node name="RemoveUnusedWarning" type="Label" parent="VBox"]
+visible = false
+margin_top = 372.0
+margin_right = 320.0
+margin_bottom = 437.0
+custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
+text = "WARNING: Remove Unused removes all keys that StringTool didn't find, including ones that may actually be used in a file type it wasn't set to check. Backup recommended"
+autowrap = true
+[connection signal="toggled" from="VBox/Grid/CheckBox_ClearFile" to="." method="_on_CheckBox_ClearFile_toggled"]
+[connection signal="toggled" from="VBox/Grid/CheckBox_RemoveUnused" to="." method="_on_CheckBox_RemoveUnused_toggled"]
+[connection signal="pressed" from="VBox/Button" to="." method="_on_Button_pressed"]
