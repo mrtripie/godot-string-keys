@@ -108,7 +108,7 @@ margin_top = 236.0
 margin_right = 308.0
 margin_bottom = 336.0
 rect_min_size = Vector2( 0, 100 )
-text = "en, "
+text = "en,"
 wrap_enabled = true
 caret_blink = true
 
@@ -132,15 +132,15 @@ placeholder_text = "Ex: $$, ##, or TR_"
 caret_blink = true
 caret_blink_speed = 0.5
 
-[node name="Label_FirstLocale" type="Label" parent="VBox/Grid"]
+[node name="Label_TextFromKey" type="Label" parent="VBox/Grid"]
 margin_top = 373.0
 margin_right = 107.0
 margin_bottom = 387.0
 hint_tooltip = "Generate an initial translation for the first listed locale from the key (by removing the prefix)"
 mouse_filter = 1
-text = "As First Locale"
+text = "Text From Key"
 
-[node name="CheckBox_FirstLocale" type="CheckBox" parent="VBox/Grid"]
+[node name="CheckBox_TextFromKey" type="CheckBox" parent="VBox/Grid"]
 margin_left = 284.0
 margin_top = 368.0
 margin_right = 308.0

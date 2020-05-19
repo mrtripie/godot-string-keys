@@ -4,6 +4,9 @@ extends Node
 #TODO:
 #Get csv file or make one
 #Write keys to csv file
+#Trigger .csv reimport
+#Throw error when set Locales don't match saved
+#Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Save and load settings/ presets
 #if the user sets to print output
 #Hide and make sure certian options are disabled when other are enabled
@@ -13,20 +16,27 @@ extends Node
 #	Only allow open tscns that aren't in ignored paths
 #	Paths to only include rather than ignore as well
 #	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
+#	Option to automatically run on file save if performance is good, or add to list of modified files to check
 
 #POTENTIAL ISSUES:
+#BACKSLASHES PROBABLY AREN'T BEING SAVED PROPERLY
 #Back slash \ and other special issues might be able to confuse what parts of a file are strings
 #Certian situations may cause a problem when using an old .csv file as an input
 
 #Test comment strings (Must remove addons from ignores path for this to work)
 #	"$$This is a test key \"Quote\""
 #   "Category$$Test key number 2 \\back\\ slashes \\"
+onready var _line_edit_prefix = $VBox/Grid/LineEdit_Prefix
+onready var _checkbox_text_from_key = $VBox/Grid/CheckBox_TextFromKey
 
 var _working := false
 var _files_to_search = []
 var _allowed_formats = []
 var _ignored_paths = []
 var _keys = []
+var _locales = []
+var _csv_file = File.new()
+var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 
 func _on_Button_pressed():
 	if _working: #Cancel work
@@ -39,6 +49,8 @@ func _on_Button_pressed():
 		#Work
 		_find_files_to_search()
 		_search_files_for_keys()
+		_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
+		_write_keys_to_csv_file()
 		_done_working()
 
 func _done_working():
@@ -50,6 +62,9 @@ func _done_working():
 	_allowed_formats = []
 	_ignored_paths = []
 	_keys = []
+	_locales = []
+	_csv_file.close()
+	_old_keys = []
 
 #Finding files:
 func _find_files_to_search():
@@ -134,8 +149,45 @@ func _find_keys_in_file(file_path : String) -> Array:
 	return found_keys
 
 func _is_string_a_key(string : String) -> bool: #TODO: at least a suffix
-	return string.find($VBox/Grid/LineEdit_Prefix.text) != -1
-	
+	return string.find(_line_edit_prefix.text) != -1
+
+#Saving to .csv file
+func _get_or_make_csv_file(path: String): #TODO: Clear file not adding old keys.......................
+	if true:#path.is_valid_filename(): ................................................................
+		if _csv_file.file_exists(path):
+			_csv_file.open(path, File.READ)
+			_csv_file.get_csv_line() #first line for locales............TODO......................
+			var _file_length = _csv_file.get_len()
+			while true:
+				if _csv_file.get_position() == _file_length:
+					break
+				_old_keys.append(_csv_file.get_csv_line())
+		print(_old_keys) ##################################################
+		_csv_file.open(path, File.WRITE)
+	else:
+		print("Error: String Keys \"Translation File\" is invalid file name")
+
+func _write_keys_to_csv_file():
+	#Locales:
+	var _locales_unformatted = $VBox/Grid/TextEdit_Locales.text.split(",", false)
+	for l in _locales_unformatted:
+		_locales.append(l.strip_edges())
+	_print_if_allowed("\nStringKeys locales: " + str(_locales))
+	#Generating .csv:
+	if _old_keys.empty(): #Generate from scratch
+		_csv_file.store_csv_line(["key"] + _locales) #First line with locales
+		for k in _keys:
+			_csv_file.store_csv_line([k, _text_from_key(k)])
+	else: #Use old ............remember option for removing unused.....................................
+		pass
+	_print_if_allowed("StringKeys: Keys saved to .csv file")
+
+func _text_from_key(key : String) -> String:
+	if _checkbox_text_from_key.pressed:
+		return key.split(_line_edit_prefix.text, true, 1)[1] #get first part after prefix
+	else:
+		return ""
+
 #Warnings:
 func _on_CheckBox_ClearFile_toggled(button_pressed):
 	$VBox/ClearFileWarning.visible = button_pressed
