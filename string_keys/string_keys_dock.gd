@@ -2,10 +2,11 @@ tool
 extends Node
 
 #TODO:
-#Get csv file or make one
-#Write keys to csv file
+#Fixing backslashes in keys
 #Trigger .csv reimport
+#Store empty strings on locales without translations to make sure the keys work
 #Throw error when set Locales don't match saved
+#Make it so that errors cause it to stop the process
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Save and load settings/ presets
 #if the user sets to print output
@@ -102,7 +103,7 @@ func _get_files_in_directory_recursive(path : String) -> Array:
 			current_file = dir.get_next()
 		return file_paths
 	else:
-		_print_if_allowed("ERROR: Couldn't open path: " + path)
+		_print_if_allowed("ERROR: Couldn't open path: " + path + "  failed")
 		return []
 
 func _is_file_allowed_format(file_name : String) -> bool:
@@ -146,37 +147,43 @@ func _find_keys_in_file(file_path : String) -> Array:
 					can_leave_string = true #can always leave if last wasn't a \
 	return found_keys
 
-func _is_string_a_key(string : String) -> bool: #TODO: at least a suffix
+func _is_string_a_key(string : String) -> bool: #TODO: maybe a suffix
 	return string.find($VBox/Grid/LineEdit_Prefix.text) != -1
 
 #Saving to .csv file
-func _get_or_make_csv_file(path: String): #TODO: Clear file not adding old keys.......................
-	if true:#path.is_valid_filename(): ................................................................
-		if _csv_file.file_exists(path):
+func _get_or_make_csv_file(path: String):
+	if path.get_file() != "": #Tries to make sure path is valid, needs improvement
+		if _csv_file.file_exists(path) and not $VBox/Grid/CheckBox_ClearFile.pressed:
 			_csv_file.open(path, File.READ)
-			_csv_file.get_csv_line() #first line for locales............TODO......................
+			_locales = _csv_file.get_csv_line() as Array #first line for locales
+			_locales.pop_front() #gets rid of the "key" in the first column
 			var _file_length = _csv_file.get_len()
 			while true:
 				if _csv_file.get_position() == _file_length:
 					break
 				_old_keys.append(_csv_file.get_csv_line())
-		print(_old_keys) ##################################################
-		_csv_file.open(path, File.WRITE)
 	else:
 		print("Error: String Keys \"Translation File\" is invalid file name")
 
 func _write_keys_to_csv_file():
 	#Locales:
-	var _locales_unformatted = $VBox/Grid/TextEdit_Locales.text.split(",", false)
-	for l in _locales_unformatted:
-		_locales.append(l.strip_edges())
+	var locales_unformatted = $VBox/Grid/TextEdit_Locales.text.split(",", false)
+	var locales_index := 0
+	var locales_are_valid := true
+	for l in locales_unformatted:
+		l = l.strip_edges()
+		if _locales.size() > locales_index:
+			if _locales[locales_index] != l:
+				locales_are_valid = false #old and new locales mismatch, error
+		else:
+			_locales.append(l) #new locale added
+		locales_index += 1
 	_print_if_allowed("\nStringKeys locales: " + str(_locales))
 	#Generating .csv:
-	_csv_file.store_csv_line(["key"] + _locales) #First line with locales
-	if _old_keys.empty(): #Generate from scratch
-		for k in _keys:
-			_csv_file.store_csv_line([k, _text_from_key(k)])
-	else: #Use old keys as well.......remember to add option for removing unused.......And if they're equal...................
+	if locales_are_valid:
+		_csv_file.open(_csv_file.get_path(), File.WRITE)
+		_csv_file.store_csv_line(["key"] + _locales) #First line with locales
+#Remember to add option for removing unused.......................................................
 		var old_index := 0
 		var new_index := 0
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
@@ -194,7 +201,6 @@ func _write_keys_to_csv_file():
 				new_index += 1
 			else:
 				print ("Error: StringKeys old key comparison failed")
-				#CHECK IF CORRECTLY ORDERED.....................................................
 		while old_index < _old_keys.size(): #If only old keys left, add old
 			_csv_file.store_csv_line(_old_keys[old_index])
 			old_index += 1
@@ -203,7 +209,9 @@ func _write_keys_to_csv_file():
 			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])])
 			new_index += 1
 			print("new")
-	_print_if_allowed("StringKeys: Keys saved to .csv file")
+		_print_if_allowed("StringKeys: Keys saved to .csv file")
+	else:
+		print("Error: StringKeys locales don't match .csv file, failed")
 
 func _text_from_key(key : String) -> String:
 	if $VBox/Grid/CheckBox_TextFromKey.pressed:
