@@ -26,8 +26,6 @@ extends Node
 #Test comment strings (Must remove addons from ignores path for this to work)
 #	"$$This is a test key \"Quote\""
 #   "Category$$Test key number 2 \\back\\ slashes \\"
-onready var _line_edit_prefix = $VBox/Grid/LineEdit_Prefix
-onready var _checkbox_text_from_key = $VBox/Grid/CheckBox_TextFromKey
 
 var _working := false
 var _files_to_search = []
@@ -149,7 +147,7 @@ func _find_keys_in_file(file_path : String) -> Array:
 	return found_keys
 
 func _is_string_a_key(string : String) -> bool: #TODO: at least a suffix
-	return string.find(_line_edit_prefix.text) != -1
+	return string.find($VBox/Grid/LineEdit_Prefix.text) != -1
 
 #Saving to .csv file
 func _get_or_make_csv_file(path: String): #TODO: Clear file not adding old keys.......................
@@ -174,17 +172,42 @@ func _write_keys_to_csv_file():
 		_locales.append(l.strip_edges())
 	_print_if_allowed("\nStringKeys locales: " + str(_locales))
 	#Generating .csv:
+	_csv_file.store_csv_line(["key"] + _locales) #First line with locales
 	if _old_keys.empty(): #Generate from scratch
-		_csv_file.store_csv_line(["key"] + _locales) #First line with locales
 		for k in _keys:
 			_csv_file.store_csv_line([k, _text_from_key(k)])
-	else: #Use old ............remember option for removing unused.....................................
-		pass
+	else: #Use old keys as well.......remember to add option for removing unused.......And if they're equal...................
+		var old_index := 0
+		var new_index := 0
+		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
+			var comparision = _old_keys[old_index][0].casecmp_to(_keys[new_index])
+			print ("comparison: " + str(comparision))
+			if comparision == -1: #add next old key
+				_csv_file.store_csv_line(_old_keys[old_index])
+				old_index += 1
+			elif comparision == 1: #add next new key
+				_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])])
+				new_index += 1
+			elif comparision == 0: #keys are equal, skip new and use old to keep manual work
+				_csv_file.store_csv_line(_old_keys[old_index])
+				old_index += 1
+				new_index += 1
+			else:
+				print ("Error: StringKeys old key comparison failed")
+				#CHECK IF CORRECTLY ORDERED.....................................................
+		while old_index < _old_keys.size(): #If only old keys left, add old
+			_csv_file.store_csv_line(_old_keys[old_index])
+			old_index += 1
+			print ("old")
+		while new_index < _keys.size(): #If only new keys left, add new
+			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])])
+			new_index += 1
+			print("new")
 	_print_if_allowed("StringKeys: Keys saved to .csv file")
 
 func _text_from_key(key : String) -> String:
-	if _checkbox_text_from_key.pressed:
-		return key.split(_line_edit_prefix.text, true, 1)[1] #get first part after prefix
+	if $VBox/Grid/CheckBox_TextFromKey.pressed:
+		return key.split($VBox/Grid/LineEdit_Prefix.text, true, 1)[1] #get first part after prefix
 	else:
 		return ""
 
