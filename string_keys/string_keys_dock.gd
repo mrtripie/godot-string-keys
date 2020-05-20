@@ -37,6 +37,7 @@ var _keys = []
 var _locales = []
 var _csv_file = File.new()
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
+var _removed_keys = []
 
 func _on_Button_pressed():
 	if _working: #Cancel work
@@ -65,6 +66,7 @@ func _done_working():
 	_locales = []
 	_csv_file.close()
 	_old_keys = []
+	_removed_keys = []
 
 #Finding files:
 func _find_files_to_search():
@@ -184,14 +186,16 @@ func _write_keys_to_csv_file():
 	if locales_are_valid:
 		_csv_file.open(_csv_file.get_path(), File.WRITE)
 		_csv_file.store_csv_line(["key"] + _locales) #First line with locales
-#Remember to add option for removing unused.......................................................
 		var old_index := 0
 		var new_index := 0
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
 			var comparision = _old_keys[old_index][0].casecmp_to(_keys[new_index])
 			print ("comparison: " + str(comparision))
 			if comparision == -1: #add next old key
-				_csv_file.store_csv_line(_old_keys[old_index])
+				if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
+					_removed_keys.append(_old_keys[old_index][0])
+				else:
+					_csv_file.store_csv_line(_old_keys[old_index])
 				old_index += 1
 			elif comparision == 1: #add next new key
 				_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])])
@@ -203,7 +207,10 @@ func _write_keys_to_csv_file():
 			else:
 				print ("Error: StringKeys old key comparison failed")
 		while old_index < _old_keys.size(): #If only old keys left, add old
-			_csv_file.store_csv_line(_old_keys[old_index])
+			if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
+				_removed_keys.append(_old_keys[old_index][0])
+			else:
+				_csv_file.store_csv_line(_old_keys[old_index])
 			old_index += 1
 			print ("old")
 		while new_index < _keys.size(): #If only new keys left, add new
@@ -211,6 +218,8 @@ func _write_keys_to_csv_file():
 			new_index += 1
 			print("new")
 		_print_if_allowed("StringKeys: Keys saved to .csv file")
+		if $VBox/Grid/CheckBox_RemoveUnused.pressed:
+			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
 	else:
 		print("Error: StringKeys locales don't match .csv file, failed")
 
