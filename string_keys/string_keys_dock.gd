@@ -9,9 +9,10 @@ extends Node
 #Make it so that errors cause it to stop the process
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Save and load settings/ presets
+#Figure out what to do with progress bar
 #if the user sets to print output
 #Hide and make sure certian options are disabled when other are enabled
-#Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
+#Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
 #	Only allow open tscns that aren't in ignored paths
@@ -152,7 +153,7 @@ func _is_string_a_key(string : String) -> bool: #TODO: maybe a suffix
 
 #Saving to .csv file
 func _get_or_make_csv_file(path: String):
-	if path.get_file() != "": #Tries to make sure path is valid, needs improvement
+	if path.get_file() != "": #Tries to make sure path is valid  TODO: needs improvement
 		if _csv_file.file_exists(path) and not $VBox/Grid/CheckBox_ClearFile.pressed:
 			_csv_file.open(path, File.READ)
 			_locales = _csv_file.get_csv_line() as Array #first line for locales
