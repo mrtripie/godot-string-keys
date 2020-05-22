@@ -21,7 +21,6 @@ extends Node
 #	Option to automatically run on file save if performance is good, or add to list of modified files to check
 
 #POTENTIAL ISSUES:
-#BACKSLASHES PROBABLY AREN'T BEING SAVED PROPERLY
 #Back slash \ and other special issues might be able to confuse what parts of a file are strings
 #Certian situations may cause a problem when using an old .csv file as an input
 
@@ -31,6 +30,7 @@ extends Node
 
 var _working := false
 var _files_to_search = []
+var _modified_files = [] #######################################################################
 var _allowed_formats = []
 var _ignored_paths = []
 var _keys = []
@@ -38,6 +38,7 @@ var _locales = []
 var _csv_file = File.new()
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys = []
+
 
 func _on_Button_pressed():
 	if _working: #Cancel work
@@ -229,16 +230,25 @@ func _text_from_key(key : String) -> String:
 	else:
 		return ""
 
-#Warnings:
+func _make_filler_slots(amount : int) -> Array: #fills in empty slots, as godot doesn't use keys that don't have a translation in all locales
+	var array = []
+	for i in range(1, amount):
+		array.append("")
+	return array
+
+#Options, warnings, disabling options:
 func _on_CheckBox_ClearFile_toggled(button_pressed):
 	$VBox/ClearFileWarning.visible = button_pressed
 
 func _on_CheckBox_RemoveUnused_toggled(button_pressed):
 	$VBox/RemoveUnusedWarning.visible = button_pressed
 
+#Maybe warn to do full checks sometimes when using auto on save/modified only............................
+
 #Other:
 func _print_if_allowed(thing): ##########################################################TODO Option
-	print(thing)
+	if $VBox/Grid/CheckBox_PrintOutput.pressed:
+		print(thing)
 
 func _append_array_to_array_unique(original: Array, addition: Array):
 	for a in addition:
