@@ -2,6 +2,7 @@ tool
 extends Node
 
 #TODO:
+#make it create the file if it doesn't exist
 #Fixing backslashes in keys
 #Trigger .csv reimport
 #Store empty strings on locales without translations to make sure the keys work
@@ -10,11 +11,11 @@ extends Node
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Save and load settings/ presets
 #Figure out what to do with progress bar
-#if the user sets to print output
 #Hide and make sure certian options are disabled when other are enabled
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
+#	Optimize options
 #	Only allow open tscns that aren't in ignored paths
 #	Paths to only include rather than ignore as well
 #	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
@@ -165,7 +166,7 @@ func _get_or_make_csv_file(path: String):
 			while true:
 				if _csv_file.get_position() == _file_length:
 					break
-				_old_keys.append(_csv_file.get_csv_line())
+				_old_keys.append(_csv_file.get_csv_line() as Array)
 	else:
 		print("Error: String Keys \"Translation File\" is invalid file name")
 
@@ -191,18 +192,18 @@ func _write_keys_to_csv_file():
 		var new_index := 0
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
 			var comparision = _old_keys[old_index][0].casecmp_to(_keys[new_index])
-			print ("comparison: " + str(comparision))
+			print ("comparison: " + str(comparision)) ###################################################################
 			if comparision == -1: #add next old key
 				if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
 					_removed_keys.append(_old_keys[old_index][0])
 				else:
-					_csv_file.store_csv_line(_old_keys[old_index])
+					_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 				old_index += 1
 			elif comparision == 1: #add next new key
-				_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])])
+				_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
 				new_index += 1
 			elif comparision == 0: #keys are equal, skip new and use old to keep manual work
-				_csv_file.store_csv_line(_old_keys[old_index])
+				_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 				old_index += 1
 				new_index += 1
 			else:
@@ -211,13 +212,13 @@ func _write_keys_to_csv_file():
 			if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
 				_removed_keys.append(_old_keys[old_index][0])
 			else:
-				_csv_file.store_csv_line(_old_keys[old_index])
+				_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 			old_index += 1
-			print ("old")
+			print ("old")##########################################################################3
 		while new_index < _keys.size(): #If only new keys left, add new
-			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])])
+			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
 			new_index += 1
-			print("new")
+			print("new")#############################################################################
 		_print_if_allowed("StringKeys: Keys saved to .csv file")
 		if $VBox/Grid/CheckBox_RemoveUnused.pressed:
 			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
@@ -228,12 +229,12 @@ func _text_from_key(key : String) -> String:
 	if $VBox/Grid/CheckBox_TextFromKey.pressed:
 		return key.split($VBox/Grid/LineEdit_Prefix.text, true, 1)[1] #get first part after prefix
 	else:
-		return ""
+		return $VBox/Grid/LineEdit_FillerStrings.text
 
-func _make_filler_slots(amount : int) -> Array: #fills in empty slots, as godot doesn't use keys that don't have a translation in all locales
+func _make_filler_strings(filled : int) -> Array: #fills in empty slots, as godot doesn't use keys that don't have a translation in all locales
 	var array = []
-	for i in range(1, amount):
-		array.append("")
+	for i in range(0, _locales.size() - filled + 1): #Maybe 0 should be one?????????????????????????????????????????????
+		array.append($VBox/Grid/LineEdit_FillerStrings.text)
 	return array
 
 #Options, warnings, disabling options:

@@ -14,7 +14,7 @@ __meta__ = {
 
 [node name="VBox" type="VBoxContainer" parent="."]
 margin_right = 320.0
-margin_bottom = 698.0
+margin_bottom = 726.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -22,7 +22,7 @@ __meta__ = {
 
 [node name="Grid" type="GridContainer" parent="VBox"]
 margin_right = 320.0
-margin_bottom = 674.0
+margin_bottom = 702.0
 columns = 2
 
 [node name="Label_TranslationFile" type="Label" parent="VBox/Grid"]
@@ -250,19 +250,38 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label_TextFromKey" type="Label" parent="VBox/Grid"]
+[node name="Label_FillerStrings" type="Label" parent="VBox/Grid"]
 margin_top = 517.0
 margin_right = 111.0
 margin_bottom = 531.0
+hint_tooltip = "What StringKeys fills in empty translation slots (Godot requires a translation for all locales to translate keys)"
+mouse_filter = 1
+text = "Filler Strings*"
+
+[node name="LineEdit_FillerStrings" type="LineEdit" parent="VBox/Grid"]
+margin_left = 115.0
+margin_top = 512.0
+margin_right = 320.0
+margin_bottom = 536.0
+size_flags_horizontal = 3
+text = "_"
+placeholder_text = "Ex: $$, ##, or TR_"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="Label_TextFromKey" type="Label" parent="VBox/Grid"]
+margin_top = 545.0
+margin_right = 111.0
+margin_bottom = 559.0
 hint_tooltip = "Generate an initial translation for the first listed locale from the key (by removing the prefix)"
 mouse_filter = 1
 text = "Text From Key"
 
 [node name="CheckBox_TextFromKey" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 512.0
+margin_top = 540.0
 margin_right = 320.0
-margin_bottom = 536.0
+margin_bottom = 564.0
 size_flags_horizontal = 8
 pressed = true
 __meta__ = {
@@ -270,9 +289,9 @@ __meta__ = {
 }
 
 [node name="Label_ClearFile" type="Label" parent="VBox/Grid"]
-margin_top = 545.0
+margin_top = 573.0
 margin_right = 111.0
-margin_bottom = 559.0
+margin_bottom = 587.0
 hint_tooltip = "If set, it will clear the file and generate it from scratch.
 This is good when you haven't manually made any changes and are checking the whole project.
 Faster performance as it doesn't need to check. 
@@ -282,25 +301,6 @@ text = "Clear File"
 
 [node name="CheckBox_ClearFile" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 540.0
-margin_right = 320.0
-margin_bottom = 564.0
-size_flags_horizontal = 8
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
-margin_top = 573.0
-margin_right = 111.0
-margin_bottom = 587.0
-hint_tooltip = "Any keys in the file that aren't found by String Tool in your game will be removed.
-Be careful as there could be ones that are used, but StringTool wasn't set up to find anymore"
-mouse_filter = 1
-text = "Remove Unused"
-
-[node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
 margin_top = 568.0
 margin_right = 320.0
 margin_bottom = 592.0
@@ -309,10 +309,29 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label_Other" type="Label" parent="VBox/Grid"]
-margin_top = 632.0
+[node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
+margin_top = 601.0
 margin_right = 111.0
-margin_bottom = 646.0
+margin_bottom = 615.0
+hint_tooltip = "Any keys in the file that aren't found by String Tool in your game will be removed.
+Be careful as there could be ones that are used, but StringTool wasn't set up to find anymore"
+mouse_filter = 1
+text = "Remove Unused"
+
+[node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
+margin_left = 296.0
+margin_top = 596.0
+margin_right = 320.0
+margin_bottom = 620.0
+size_flags_horizontal = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label_Other" type="Label" parent="VBox/Grid"]
+margin_top = 660.0
+margin_right = 111.0
+margin_bottom = 674.0
 hint_tooltip = "File name in CSV format.
 If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
@@ -322,36 +341,36 @@ text = "Other:"
 
 [node name="Control3" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
-margin_top = 596.0
+margin_top = 624.0
 margin_right = 320.0
-margin_bottom = 646.0
+margin_bottom = 674.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_PrintOutput" type="Label" parent="VBox/Grid"]
-margin_top = 655.0
+margin_top = 683.0
 margin_right = 111.0
-margin_bottom = 669.0
+margin_bottom = 697.0
 hint_tooltip = "Should StringKeys print to the output tab things like what files it searched and what keys it found? It will print errors either way."
 mouse_filter = 1
 text = "Print to Output"
 
 [node name="CheckBox_PrintOutput" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 650.0
+margin_top = 678.0
 margin_right = 320.0
-margin_bottom = 674.0
+margin_bottom = 702.0
 size_flags_horizontal = 8
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Button" type="Button" parent="VBox"]
-margin_top = 678.0
+margin_top = 706.0
 margin_right = 320.0
-margin_bottom = 698.0
+margin_bottom = 726.0
 text = "Create Translation File"
 
 [node name="ProgressBar" type="ProgressBar" parent="VBox"]
