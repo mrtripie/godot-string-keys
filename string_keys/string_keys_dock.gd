@@ -1,12 +1,9 @@
 tool
 extends Node
 
-#TODO:
+#TODO:  (Add this to README)
 #make it create the file if it doesn't exist
-#Fixing backslashes in keys
 #Trigger .csv reimport
-#Store empty strings on locales without translations to make sure the keys work
-#Throw error when set Locales don't match saved
 #Make it so that errors cause it to stop the process
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Save and load settings/ presets
@@ -21,9 +18,12 @@ extends Node
 #	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
 #	Option to automatically run on file save if performance is good, or add to list of modified files to check
 
-#POTENTIAL ISSUES:
+#LIKELY POTENTIAL ISSUES:
 #Back slash \ and other special issues might be able to confuse what parts of a file are strings
 #Certian situations may cause a problem when using an old .csv file as an input
+
+#KNOWN ISSUES:
+#2 backslashes \\ in a row in a translation will be read by godot as 1, even though the generated file appears to be correct
 
 #Test comment strings (Must remove addons from ignores path for this to work)
 #	"$$This is a test key \"Quote\""
@@ -136,6 +136,8 @@ func _find_keys_in_file(file_path : String) -> Array:
 	var found_string : String
 	var can_leave_string := true #used so that \ doesn't cause issues with whether a " is the end of a string, or part of it
 	for c in file_text:
+		if c != "n" and not can_leave_string and is_in_string: #Removes any \ that should not be in the key
+			found_string = found_string.trim_suffix("\\")
 		if c == "\"" and can_leave_string: #character is an ", entering/leaving a string
 			if is_in_string:
 				if _is_string_a_key(found_string):
@@ -192,7 +194,7 @@ func _write_keys_to_csv_file():
 		var new_index := 0
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
 			var comparision = _old_keys[old_index][0].casecmp_to(_keys[new_index])
-			print ("comparison: " + str(comparision)) ###################################################################
+			#print ("comparison: " + str(comparision)) ###################################################################
 			if comparision == -1: #add next old key
 				if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
 					_removed_keys.append(_old_keys[old_index][0])
@@ -214,11 +216,11 @@ func _write_keys_to_csv_file():
 			else:
 				_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 			old_index += 1
-			print ("old")##########################################################################3
+			#print ("old")##########################################################################3
 		while new_index < _keys.size(): #If only new keys left, add new
 			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
 			new_index += 1
-			print("new")#############################################################################
+			#print("new")#############################################################################
 		_print_if_allowed("StringKeys: Keys saved to .csv file")
 		if $VBox/Grid/CheckBox_RemoveUnused.pressed:
 			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
