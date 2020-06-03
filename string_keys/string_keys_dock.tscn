@@ -197,7 +197,7 @@ margin_right = 111.0
 margin_bottom = 472.0
 hint_tooltip = "Should it automatically find all keys from a file you just saved?"
 mouse_filter = 1
-text = "Auto Run on Save"
+text = "Auto on Save"
 
 [node name="CheckBox_AutoRunOnSave" type="CheckBox" parent="VBox/Grid"]
 visible = false
@@ -217,6 +217,7 @@ margin_right = 111.0
 margin_bottom = 472.0
 hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed"
 mouse_filter = 1
+custom_colors/font_color = Color( 0.513726, 0.513726, 0.513726, 1 )
 text = "Modified Files"
 
 [node name="Text_ModifiedFiles" type="Label" parent="VBox/Grid"]
@@ -226,7 +227,7 @@ margin_right = 107.0
 margin_bottom = 472.0
 hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed"
 mouse_filter = 1
-custom_colors/font_color = Color( 0.67451, 0.67451, 0.67451, 1 )
+custom_colors/font_color = Color( 0.513726, 0.513726, 0.513726, 1 )
 autowrap = true
 
 [node name="Label_CsvFileCreation" type="Label" parent="VBox/Grid"]
@@ -396,6 +397,7 @@ margin_bottom = 437.0
 custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
 text = "WARNING: Remove Unused removes all keys that StringTool didn't find, including ones that may actually be used in a file type it wasn't set to check. Backup recommended"
 autowrap = true
+[connection signal="toggled" from="VBox/Grid/CheckBox_ModifiedOnly" to="." method="_on_CheckBox_ModifiedOnly_toggled"]
 [connection signal="toggled" from="VBox/Grid/CheckBox_ClearFile" to="." method="_on_CheckBox_ClearFile_toggled"]
 [connection signal="toggled" from="VBox/Grid/CheckBox_RemoveUnused" to="." method="_on_CheckBox_RemoveUnused_toggled"]
 [connection signal="pressed" from="VBox/Button" to="." method="_on_Button_pressed"]

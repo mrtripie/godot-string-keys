@@ -3,12 +3,13 @@ extends Node
 
 #TODO:  (Add this to README)
 #make it create the file if it doesn't exist
-#Trigger .csv reimport
+#Trigger .csv reimport  (maybe calling EditorFileSystem scan() would do the trick)
+#a close() to every file.open()
 #Make it so that errors cause it to stop the process
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
-#Save and load settings/ presets
+#Presets
 #Figure out what to do with progress bar
-#Hide and make sure certian options are disabled when other are enabled
+#Hide and make sure certian options are disabled when other are enabled (modified only and clear file/remove unused!)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
@@ -39,7 +40,25 @@ var _locales = []
 var _csv_file = File.new()
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys = []
+var _save_data := { #Make sure this is correct, ie: Open Tscns Only is not included#############################
+	"translation_file" : "",
+	"file_types_to_check" : "tscn, tres, gd, cs,",
+	"paths_to_ignore" : ".git, .import, addons,",
+	"locales" : "en,",
+	"prefix" : "$$",
+	"modified_only" : false,
+	"filler_strings" : "_",
+	"text_from_key" : true,
+	"clear_file" : false,
+	"remove_unused" : false,
+	"print_to_output" : false,
+}
 
+func _enter_tree():
+	_load_options("options.sko") #.sko for current options, .skp for preset options
+
+func _exit_tree():
+	_save_options("options.sko")
 
 func _on_Button_pressed():
 	if _working: #Cancel work
@@ -50,6 +69,7 @@ func _on_Button_pressed():
 		$VBox/ProgressBar.show()
 		$VBox/Button.text = "Cancel..."
 		#Work
+		_save_options("options.sko")
 		_find_files_to_search()
 		_search_files_for_keys()
 		_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
@@ -235,9 +255,61 @@ func _text_from_key(key : String) -> String:
 
 func _make_filler_strings(filled : int) -> Array: #fills in empty slots, as godot doesn't use keys that don't have a translation in all locales
 	var array = []
-	for i in range(0, _locales.size() - filled + 1): #Maybe 0 should be one?????????????????????????????????????????????
+	for i in range(0, _locales.size() - filled + 1):
 		array.append($VBox/Grid/LineEdit_FillerStrings.text)
 	return array
+
+#Modified files:
+func add_to_modified_files(resource: Resource):
+	print("file modified")
+	if not _modified_files.has(resource.resource_path):
+		_modified_files.append(resource.resource_path)
+		$VBox/Grid/Text_ModifiedFiles.text = str(_modified_files)
+		
+
+#Saving/loading loptions:
+func _save_options(file_name : String):
+	print("save")
+	#set options from buttons:
+	_save_data.translation_file = $VBox/Grid/LineEdit_TranslationFile.text
+	_save_data.file_types_to_check = $VBox/Grid/TextEdit_FileTypes.text
+	_save_data.paths_to_ignore = $VBox/Grid/TextEdit_PathsToIgnore.text
+	_save_data.locales = $VBox/Grid/TextEdit_Locales.text
+	_save_data.prefix = $VBox/Grid/LineEdit_Prefix.text
+	_save_data.modified_only = $VBox/Grid/CheckBox_ModifiedOnly.pressed
+	_save_data.filler_strings = $VBox/Grid/LineEdit_FillerStrings.text
+	_save_data.text_from_key = $VBox/Grid/CheckBox_TextFromKey.pressed
+	_save_data.clear_file = $VBox/Grid/CheckBox_ClearFile.pressed
+	_save_data.remove_unused = $VBox/Grid/CheckBox_RemoveUnused.pressed
+	_save_data.print_to_output = $VBox/Grid/CheckBox_PrintOutput.pressed
+	#save options:
+	var dir := Directory.new()
+	dir.make_dir_recursive("res://addons/string_keys/options/")
+	var file := File.new()
+	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
+	file.store_string(to_json(_save_data))
+	file.close()
+
+func _load_options(file_name : String):
+	print("load")
+	#load options:
+	var file := File.new()
+	if file.file_exists("res://addons/string_keys/options/" + file_name):
+		file.open("res://addons/string_keys/options/" + file_name, File.READ)
+		_save_data = parse_json(file.get_as_text())
+		file.close()
+	#set option buttons:
+	$VBox/Grid/LineEdit_TranslationFile.text = _save_data.translation_file
+	$VBox/Grid/TextEdit_FileTypes.text = _save_data.file_types_to_check
+	$VBox/Grid/TextEdit_PathsToIgnore.text = _save_data.paths_to_ignore
+	$VBox/Grid/TextEdit_Locales.text = _save_data.locales
+	$VBox/Grid/LineEdit_Prefix.text = _save_data.prefix
+	$VBox/Grid/CheckBox_ModifiedOnly.pressed = _save_data.modified_only
+	$VBox/Grid/LineEdit_FillerStrings.text = _save_data.filler_strings
+	$VBox/Grid/CheckBox_TextFromKey.pressed = _save_data.text_from_key
+	$VBox/Grid/CheckBox_ClearFile.pressed = _save_data.clear_file
+	$VBox/Grid/CheckBox_RemoveUnused.pressed = _save_data.remove_unused
+	$VBox/Grid/CheckBox_PrintOutput.pressed = _save_data.print_to_output
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ClearFile_toggled(button_pressed):
@@ -245,6 +317,13 @@ func _on_CheckBox_ClearFile_toggled(button_pressed):
 
 func _on_CheckBox_RemoveUnused_toggled(button_pressed):
 	$VBox/RemoveUnusedWarning.visible = button_pressed
+
+func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
+	$VBox/Grid/Label_ModifiedFiles.visible = button_pressed
+	$VBox/Grid/Text_ModifiedFiles.visible = button_pressed
+	$VBox/Grid/Label_AutoRunOnSave.visible = button_pressed
+	$VBox/Grid/CheckBox_AutoRunOnSave.visible = button_pressed
+	$VBox/Grid/CheckBox_AutoRunOnSave.pressed = false
 
 #Maybe warn to do full checks sometimes when using auto on save/modified only............................
 
@@ -257,3 +336,5 @@ func _append_array_to_array_unique(original: Array, addition: Array):
 	for a in addition:
 		if not original.has(a):
 			original.append(a)
+
+
