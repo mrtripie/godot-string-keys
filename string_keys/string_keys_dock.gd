@@ -1,6 +1,8 @@
 tool
 extends Node
 
+#NOTE: Saving modified files list should probably be on User dir, as it probably won't play well with source control teams, and should automatically get all modified files
+
 #TODO:  (Add this to README)
 #make it create the file if it doesn't exist
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() would do the trick)
@@ -47,6 +49,7 @@ var _save_data := { #Make sure this is correct, ie: Open Tscns Only is not inclu
 	"locales" : "en,",
 	"prefix" : "$$",
 	"modified_only" : false,
+	"auto_on_save" : false,
 	"filler_strings" : "_",
 	"text_from_key" : true,
 	"clear_file" : false,
@@ -277,6 +280,7 @@ func _save_options(file_name : String):
 	_save_data.locales = $VBox/Grid/TextEdit_Locales.text
 	_save_data.prefix = $VBox/Grid/LineEdit_Prefix.text
 	_save_data.modified_only = $VBox/Grid/CheckBox_ModifiedOnly.pressed
+	_save_data.auto_on_save = $VBox/Grid/CheckBox_AutoRunOnSave.pressed
 	_save_data.filler_strings = $VBox/Grid/LineEdit_FillerStrings.text
 	_save_data.text_from_key = $VBox/Grid/CheckBox_TextFromKey.pressed
 	_save_data.clear_file = $VBox/Grid/CheckBox_ClearFile.pressed
@@ -305,6 +309,7 @@ func _load_options(file_name : String):
 	$VBox/Grid/TextEdit_Locales.text = _save_data.locales
 	$VBox/Grid/LineEdit_Prefix.text = _save_data.prefix
 	$VBox/Grid/CheckBox_ModifiedOnly.pressed = _save_data.modified_only
+	$VBox/Grid/CheckBox_AutoRunOnSave.pressed = _save_data.auto_on_save
 	$VBox/Grid/LineEdit_FillerStrings.text = _save_data.filler_strings
 	$VBox/Grid/CheckBox_TextFromKey.pressed = _save_data.text_from_key
 	$VBox/Grid/CheckBox_ClearFile.pressed = _save_data.clear_file
