@@ -7,7 +7,7 @@ extends Node
 #make it create the file if it doesn't exist
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() would do the trick)
 #a close() to every file.open()
-#Make it so that errors cause it to stop the process
+#Make it so that errors cause it to stop the process (return true/false based on success and use an if where called)
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Presets
 #Figure out what to do with progress bar
@@ -264,15 +264,12 @@ func _make_filler_strings(filled : int) -> Array: #fills in empty slots, as godo
 
 #Modified files:
 func add_to_modified_files(resource: Resource):
-	print("file modified")
 	if not _modified_files.has(resource.resource_path):
 		_modified_files.append(resource.resource_path)
 		$VBox/Grid/Text_ModifiedFiles.text = str(_modified_files)
-		
 
 #Saving/loading loptions:
 func _save_options(file_name : String):
-	print("save")
 	#set options from buttons:
 	_save_data.translation_file = $VBox/Grid/LineEdit_TranslationFile.text
 	_save_data.file_types_to_check = $VBox/Grid/TextEdit_FileTypes.text
@@ -295,7 +292,6 @@ func _save_options(file_name : String):
 	file.close()
 
 func _load_options(file_name : String):
-	print("load")
 	#load options:
 	var file := File.new()
 	if file.file_exists("res://addons/string_keys/options/" + file_name):
