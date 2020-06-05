@@ -14,7 +14,7 @@ __meta__ = {
 
 [node name="VBox" type="VBoxContainer" parent="."]
 margin_right = 320.0
-margin_bottom = 866.0
+margin_bottom = 912.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -22,7 +22,7 @@ __meta__ = {
 
 [node name="Grid" type="GridContainer" parent="VBox"]
 margin_right = 320.0
-margin_bottom = 842.0
+margin_bottom = 888.0
 columns = 2
 
 [node name="Label_TranslationFile" type="Label" parent="VBox/Grid"]
@@ -39,6 +39,7 @@ margin_left = 115.0
 margin_right = 320.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
+text = "res://Translations/Translations.csv"
 placeholder_text = "res://*.csv"
 caret_blink = true
 caret_blink_speed = 0.5
@@ -99,7 +100,7 @@ margin_top = 166.0
 margin_right = 320.0
 margin_bottom = 426.0
 rect_min_size = Vector2( 0, 260 )
-text = ".git, .import, addons,"
+text = ".git, .import, addons, Levels/StringKeysTestLevels"
 wrap_enabled = true
 caret_blink = true
 
@@ -186,54 +187,52 @@ margin_top = 570.0
 margin_right = 320.0
 margin_bottom = 594.0
 size_flags_horizontal = 8
+pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_AutoRunOnSave" type="Label" parent="VBox/Grid"]
-visible = false
-margin_top = 458.0
+margin_top = 603.0
 margin_right = 111.0
-margin_bottom = 472.0
+margin_bottom = 617.0
 hint_tooltip = "Should it automatically find all keys from a file you just saved?"
 mouse_filter = 1
-text = "Auto on Save"
+text = "  Auto on Save"
 
 [node name="CheckBox_AutoRunOnSave" type="CheckBox" parent="VBox/Grid"]
-visible = false
 margin_left = 296.0
-margin_top = 458.0
+margin_top = 598.0
 margin_right = 320.0
-margin_bottom = 482.0
+margin_bottom = 622.0
 size_flags_horizontal = 8
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_ModifiedFiles" type="Label" parent="VBox/Grid"]
-visible = false
-margin_top = 458.0
+margin_top = 626.0
 margin_right = 111.0
-margin_bottom = 472.0
+margin_bottom = 640.0
 hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed"
 mouse_filter = 1
 custom_colors/font_color = Color( 0.513726, 0.513726, 0.513726, 1 )
 text = "Modified Files"
 
 [node name="Text_ModifiedFiles" type="Label" parent="VBox/Grid"]
-visible = false
-margin_top = 458.0
-margin_right = 107.0
-margin_bottom = 472.0
+margin_left = 115.0
+margin_top = 626.0
+margin_right = 320.0
+margin_bottom = 640.0
 hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed"
 mouse_filter = 1
 custom_colors/font_color = Color( 0.513726, 0.513726, 0.513726, 1 )
 autowrap = true
 
 [node name="Label_CsvFileCreation" type="Label" parent="VBox/Grid"]
-margin_top = 634.0
+margin_top = 680.0
 margin_right = 111.0
-margin_bottom = 648.0
+margin_bottom = 694.0
 hint_tooltip = "File name in CSV format.
 If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
@@ -243,27 +242,27 @@ text = "CSV File Creation:"
 
 [node name="Control2" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
-margin_top = 598.0
+margin_top = 644.0
 margin_right = 320.0
-margin_bottom = 648.0
+margin_bottom = 694.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_FillerStrings" type="Label" parent="VBox/Grid"]
-margin_top = 657.0
+margin_top = 703.0
 margin_right = 111.0
-margin_bottom = 671.0
+margin_bottom = 717.0
 hint_tooltip = "What StringKeys fills in empty translation slots (Godot requires a translation for all locales to translate keys)"
 mouse_filter = 1
 text = "Filler Strings*"
 
 [node name="LineEdit_FillerStrings" type="LineEdit" parent="VBox/Grid"]
 margin_left = 115.0
-margin_top = 652.0
+margin_top = 698.0
 margin_right = 320.0
-margin_bottom = 676.0
+margin_bottom = 722.0
 size_flags_horizontal = 3
 text = "_"
 placeholder_text = "Ex: $$, ##, or TR_"
@@ -271,18 +270,18 @@ caret_blink = true
 caret_blink_speed = 0.5
 
 [node name="Label_TextFromKey" type="Label" parent="VBox/Grid"]
-margin_top = 685.0
+margin_top = 731.0
 margin_right = 111.0
-margin_bottom = 699.0
+margin_bottom = 745.0
 hint_tooltip = "Generate an initial translation for the first listed locale from the key (by removing the prefix)"
 mouse_filter = 1
 text = "Text From Key"
 
 [node name="CheckBox_TextFromKey" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 680.0
+margin_top = 726.0
 margin_right = 320.0
-margin_bottom = 704.0
+margin_bottom = 750.0
 size_flags_horizontal = 8
 pressed = true
 __meta__ = {
@@ -290,9 +289,9 @@ __meta__ = {
 }
 
 [node name="Label_ClearFile" type="Label" parent="VBox/Grid"]
-margin_top = 713.0
+margin_top = 759.0
 margin_right = 111.0
-margin_bottom = 727.0
+margin_bottom = 773.0
 hint_tooltip = "If set, it will clear the file and generate it from scratch.
 This is good when you haven't manually made any changes and are checking the whole project.
 Faster performance as it doesn't need to check. 
@@ -302,18 +301,18 @@ text = "Clear File"
 
 [node name="CheckBox_ClearFile" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 708.0
+margin_top = 754.0
 margin_right = 320.0
-margin_bottom = 732.0
+margin_bottom = 778.0
 size_flags_horizontal = 8
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
-margin_top = 741.0
+margin_top = 787.0
 margin_right = 111.0
-margin_bottom = 755.0
+margin_bottom = 801.0
 hint_tooltip = "Any keys in the file that aren't found by String Tool in your game will be removed.
 Be careful as there could be ones that are used, but StringTool wasn't set up to find anymore"
 mouse_filter = 1
@@ -321,18 +320,18 @@ text = "Remove Unused"
 
 [node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 736.0
+margin_top = 782.0
 margin_right = 320.0
-margin_bottom = 760.0
+margin_bottom = 806.0
 size_flags_horizontal = 8
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_Other" type="Label" parent="VBox/Grid"]
-margin_top = 800.0
+margin_top = 846.0
 margin_right = 111.0
-margin_bottom = 814.0
+margin_bottom = 860.0
 hint_tooltip = "File name in CSV format.
 If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
@@ -342,36 +341,37 @@ text = "Other:"
 
 [node name="Control3" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
-margin_top = 764.0
+margin_top = 810.0
 margin_right = 320.0
-margin_bottom = 814.0
+margin_bottom = 860.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_PrintOutput" type="Label" parent="VBox/Grid"]
-margin_top = 823.0
+margin_top = 869.0
 margin_right = 111.0
-margin_bottom = 837.0
+margin_bottom = 883.0
 hint_tooltip = "Should StringKeys print to the output tab things like what files it searched and what keys it found? It will print errors either way."
 mouse_filter = 1
 text = "Print to Output"
 
 [node name="CheckBox_PrintOutput" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 818.0
+margin_top = 864.0
 margin_right = 320.0
-margin_bottom = 842.0
+margin_bottom = 888.0
 size_flags_horizontal = 8
+pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Button" type="Button" parent="VBox"]
-margin_top = 846.0
+margin_top = 892.0
 margin_right = 320.0
-margin_bottom = 866.0
+margin_bottom = 912.0
 text = "Create Translation File"
 
 [node name="ProgressBar" type="ProgressBar" parent="VBox"]

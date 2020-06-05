@@ -4,39 +4,47 @@ extends Node
 #NOTE: Saving modified files list should probably be on User dir, as it probably won't play well with source control teams, and should automatically get all modified files
 
 #TODO:  (Add this to README)
+#Clear File is causeing error
 #make it create the file if it doesn't exist
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() would do the trick)
 #a close() to every file.open()
 #Make it so that errors cause it to stop the process (return true/false based on success and use an if where called)
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
-#Presets
 #Figure out what to do with progress bar
 #Hide and make sure certian options are disabled when other are enabled (modified only and clear file/remove unused!)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
+#	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
+#	See if you can find a way to deal with a way to deal with modified when different settings come in to play
 #	Optimize options
 #	Only allow open tscns that aren't in ignored paths
 #	Paths to only include rather than ignore as well
 #	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
 #	Option to automatically run on file save if performance is good, or add to list of modified files to check
 
-#LIKELY POTENTIAL ISSUES:
+#LIKELY POTENTIAL ISSUES: (add to readme)
 #Back slash \ and other special issues might be able to confuse what parts of a file are strings
 #Certian situations may cause a problem when using an old .csv file as an input
+#Using modified time to check if a file is modified may not be 100% reliable, version control a likely problem
+#	Godot may have a better solution built in (likely EditorFileSystem), but I couldn't figure out how to make it work reliably
+#	Saving and comparing the sha256 generated from all supported files may be more accurate
+#	Very high chance of inaccuracy when generating with different settings (ex: have multiple translation files)
 
 #KNOWN ISSUES:
 #2 backslashes \\ in a row in a translation will be read by godot as 1, even though the generated file appears to be correct
 
-#Test comment strings (Must remove addons from ignores path for this to work)
+#Formatting in code: (maybe add to readme)
+#	"$$This is a simple test"
 #	"$$This is a test key \"Quote\""
 #   "Category$$Test key number 2 \\back\\ slashes \\"
 
 var _working := false
 var _files_to_search = []
-var _modified_files = [] #######################################################################
+var _modified_files = [] ################REMOVE#######################################################
 var _allowed_formats = []
 var _ignored_paths = []
+var _file_hashes : Dictionary #used to check if a file is modified
 var _keys = []
 var _locales = []
 var _csv_file = File.new()
@@ -64,7 +72,7 @@ func _exit_tree():
 	_save_options("options.sko")
 
 func _on_Button_pressed():
-	if _working: #Cancel work
+	if _working: #Cancel work..........................................Probably not needed..................
 		_done_working()
 	else: #Start working
 		#Display:
@@ -74,10 +82,17 @@ func _on_Button_pressed():
 		#Work
 		_save_options("options.sko")
 		_find_files_to_search()
+		_track_modified_files()
+		_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
+		#if $VBox/Grid/CheckBox_ModifiedOnly.pressed:  #time based, prob faster than sha256, but prob less accurate
+		#	_scan_filesystem_for_modified_files_fast()
 		_search_files_for_keys()
 		_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
 		_write_keys_to_csv_file()
+		_save_file_hashes()
+		
 		_done_working()
+		#_save_last_translation_file_gen_time(OS.get_unix_time())
 
 func _done_working():
 	_working = false
@@ -87,6 +102,7 @@ func _done_working():
 	_files_to_search = []
 	_allowed_formats = []
 	_ignored_paths = []
+	_file_hashes.clear()
 	_keys = []
 	_locales = []
 	_csv_file.close()
@@ -94,8 +110,8 @@ func _done_working():
 	_removed_keys = []
 
 #Finding files:
-func _find_files_to_search():
-	if $VBox/Grid/CheckBox_OpenTscnsOnly.pressed:
+func _find_files_to_search(): 
+	if $VBox/Grid/CheckBox_OpenTscnsOnly.pressed: #TODO: REMOVE IF MODIFIED FILES WORKS
 		_files_to_search = EditorScript.new().get_editor_interface().get_open_scenes()
 		_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
 	else:
@@ -112,7 +128,6 @@ func _find_files_to_search():
 		#print:
 		_print_if_allowed("\nStringKeys allowed formats: " + str(_allowed_formats))
 		_print_if_allowed("StringKeys ignored paths: " + str(_ignored_paths))
-		_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
 
 func _get_files_in_directory_recursive(path : String) -> Array:
 	var dir = Directory.new()
@@ -263,10 +278,62 @@ func _make_filler_strings(filled : int) -> Array: #fills in empty slots, as godo
 	return array
 
 #Modified files:
+func _track_modified_files(): #tracks and compares sha256 of files, if modified only, removes unmodified from _files_to_search
+	var file := File.new()
+	if file.file_exists("user://string_keys_file_hashes.skfh"):
+		file.open("user://string_keys_file_hashes.skfh", File.READ)
+		var fh_check = file.get_var()#parse_json(file.to_string())#############################
+		if typeof(fh_check) == TYPE_DICTIONARY:
+			_file_hashes = fh_check
+		else:
+			print("_file_hashes file is invalid")
+	var modified_files = []
+	for f in _files_to_search:
+		var old_sha = _file_hashes.get(f) #null if new file, will be modified
+		var new_sha = file.get_sha256(f)
+		if old_sha != new_sha:
+			modified_files.append(f)
+			_file_hashes[f] = new_sha
+			print (f + ": modified")
+		else:
+			print (f + ": not modified")
+	if $VBox/Grid/CheckBox_ModifiedOnly.pressed:
+		_files_to_search = modified_files
+
+func _save_file_hashes(): #only do after everything runs error free
+	var file := File.new()
+	file.open("user://string_keys_file_hashes.skfh", File.WRITE)
+	file.store_var(_file_hashes)#store_string(to_json(_file_hashes)) #######################333
+	file.close()
+
 func add_to_modified_files(resource: Resource):
 	if not _modified_files.has(resource.resource_path):
 		_modified_files.append(resource.resource_path)
-		$VBox/Grid/Text_ModifiedFiles.text = str(_modified_files)
+#		$VBox/Grid/Text_ModifiedFiles.text = str(_modified_files)
+
+#func _scan_filesystem_for_modified_files_fast():
+#	var last_time := _load_last_translation_file_gen_time()
+#	var file := File.new()
+#	var modified = []
+#	for fn in _files_to_search:
+#		if file.get_modified_time(fn) > last_time:
+#			modified += fn
+#	_files_to_search = modified
+#
+#func _load_last_translation_file_gen_time() -> int:
+#	var time := 0
+#	var file := File.new()
+#	file.open("user://string_keys_last_translation_file_gen_time.skt", File.READ)
+#	if file.is_open():
+#		time = file.get_32()
+#	file.close()
+#	return time
+#
+#func _save_last_translation_file_gen_time(time : int):
+#	var file := File.new()
+#	file.open("user://string_keys_last_translation_file_gen_time.skt", File.WRITE)
+#	file.store_32(time)
+#	file.close()
 
 #Saving/loading loptions:
 func _save_options(file_name : String):
