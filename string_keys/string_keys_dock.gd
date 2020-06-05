@@ -75,17 +75,18 @@ func _on_Button_pressed():
 		_working = true
 		$VBox/ProgressBar.show()
 		$VBox/Button.text = "Cancel..."
-		#Work
-		_save_options("options.sko")
-		_find_files_to_search()
-		_track_modified_files()
-		_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
-		_search_files_for_keys()
-		_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
-		_write_keys_to_csv_file()
-		_save_file_hashes()
-		
-		_done_working()
+		_work()
+
+func _work():
+	_save_options("options.sko")
+	_find_files_to_search()
+	_track_modified_files()
+	_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
+	_search_files_for_keys()
+	_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
+	_write_keys_to_csv_file()
+	_save_file_hashes()
+	_done_working()
 
 func _done_working():
 	_working = false
@@ -288,6 +289,12 @@ func _save_file_hashes(): #only do after everything runs error free
 	file.store_var(_file_hashes)
 	file.close()
 
+#Auto run on save:
+func auto_on_save(_resource : Resource):
+	yield(get_tree().create_timer(0.1), "timeout") #makes sure it runs after file is saved, not before
+	if $VBox/Grid/CheckBox_AutoRunOnSave.pressed:
+		print("Running StringKeys on save")
+		_work()
 
 #Saving/loading options:
 func _save_options(file_name : String):
