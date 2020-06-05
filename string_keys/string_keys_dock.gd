@@ -3,9 +3,11 @@ extends Node
 
 #TODO:  (Add this to README)
 #Clear File is causeing error
+#move auto on save to personal save file in User://
 #Auto on save warning, modified only, clear, and remove
 #make it create the file if it doesn't exist
-#Trigger .csv reimport  (maybe calling EditorFileSystem scan() would do the trick)
+#Skip writing to csv file if there's no keys (still make it to the end to save file hashes)
+#Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
 #a close() to every file.open()
 #Make it so that errors cause it to stop the process (return true/false based on success and use an if where called)
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
@@ -18,7 +20,7 @@ extends Node
 #	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
 #	See if you can find a way to deal with a way to deal with modified when different settings come in to play
 #	Optimize options
-#	Only allow open tscns that aren't in ignored paths
+#	Only allow open tscns that aren't in ignored paths  
 #	Paths to only include rather than ignore as well
 #	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
 #	Option to automatically run on file save if performance is good, or add to list of modified files to check
@@ -36,6 +38,7 @@ extends Node
 #	"$$This is a test key \"Quote\""
 #   "Category$$Test key number 2 \\back\\ slashes \\"
 
+var plugin : EditorPlugin
 var _working := false
 var _files_to_search = []
 var _allowed_formats = []
@@ -63,6 +66,7 @@ var _save_data := { #Make sure this is correct, ie: Open Tscns Only is not inclu
 
 func _enter_tree():
 	_load_options("options.sko") #.sko for current options, .skp for preset options
+	plugin.connect("resource_saved", self, "auto_on_save")
 
 func _exit_tree():
 	_save_options("options.sko")
@@ -81,7 +85,6 @@ func _work():
 	_save_options("options.sko")
 	_find_files_to_search()
 	_track_modified_files()
-	_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
 	_search_files_for_keys()
 	_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
 	_write_keys_to_csv_file()
@@ -282,6 +285,9 @@ func _track_modified_files(): #tracks and compares sha256 of files, if modified 
 			_file_hashes[f] = new_sha256
 	if $VBox/Grid/CheckBox_ModifiedOnly.pressed:
 		_files_to_search = modified_files
+		_print_if_allowed("\nStringKeys (modified) files to search: " + str(_files_to_search))
+	else:
+		_print_if_allowed("\nStringKeys files to search: " + str(_files_to_search))
 
 func _save_file_hashes(): #only do after everything runs error free
 	var file := File.new()
@@ -291,7 +297,10 @@ func _save_file_hashes(): #only do after everything runs error free
 
 #Auto run on save:
 func auto_on_save(_resource : Resource):
-	yield(get_tree().create_timer(0.1), "timeout") #makes sure it runs after file is saved, not before
+	#resource_saved signal is BEFORE the save, waiting until the filesytem has channged
+	#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
+	#work because when it changes the translation file, making it run again
+	yield(plugin.get_editor_interface().get_resource_filesystem(), "filesystem_changed") 
 	if $VBox/Grid/CheckBox_AutoRunOnSave.pressed:
 		print("Running StringKeys on save")
 		_work()

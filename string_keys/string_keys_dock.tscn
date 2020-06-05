@@ -188,7 +188,6 @@ margin_top = 570.0
 margin_right = 320.0
 margin_bottom = 594.0
 size_flags_horizontal = 8
-pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -327,6 +326,7 @@ margin_top = 818.0
 margin_right = 320.0
 margin_bottom = 842.0
 size_flags_horizontal = 8
+pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
