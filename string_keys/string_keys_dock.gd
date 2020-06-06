@@ -4,9 +4,7 @@ extends Node
 #TODO:  (Add this to README)
 #See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
 #make it create the file if it doesn't exist
-#Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
 #a close() to every file.open()
-#Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
@@ -72,6 +70,7 @@ func _work():
 		if _get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text): #true = no errors, continue
 			if _write_keys_to_csv_file($VBox/Grid/LineEdit_TranslationFile.text):
 				_save_file_hashes() #Only run this if there were no errors, otherwise file will be incorrect
+				plugin.get_editor_interface().get_resource_filesystem().scan() #Triggers reimport of csv file
 				print("StringKeys succesful")
 	else:
 		_save_file_hashes() #Ran without error, but none of the modified files had changes to add
@@ -299,7 +298,7 @@ func _clean_up_file_hashes_file(): #removes any files that don't exist anymore f
 func auto_on_save(_resource : Resource):
 	#resource_saved signal is BEFORE the save, waiting until the filesytem has channged
 	#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
-	#work because when it changes the translation file, making it run again
+	#work because when it changes the csv file, making it run again
 	yield(plugin.get_editor_interface().get_resource_filesystem(), "filesystem_changed") 
 	if $VBox/Grid/CheckBox_AutoRunOnSave.pressed:
 		print("Running StringKeys on save")
@@ -326,7 +325,7 @@ func _save_options(file_name : String):
 	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
 	file.store_string(to_json(_save_data))
 	file.close()
-	#Personal Options: (Auto on save: likely best if only one member generates the translation file for version control)
+	#Personal Options: (Auto on save: likely best if only one member generates the csv file for version control)
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
 	file.store_var($VBox/Grid/CheckBox_AutoRunOnSave.pressed)
 	file.close()
