@@ -2,7 +2,6 @@ tool
 extends Node
 
 #TODO:  (Add this to README)
-#move auto on save to personal save file in User://
 #Auto on save warning, modified only, clear, and remove
 #make it create the file if it doesn't exist
 #Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes)
@@ -14,7 +13,6 @@ extends Node
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
-#	Option button to clear file hashes for modified files may be good for long running projects
 #	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
 #	See if you can find a way to deal with a way to deal with modified when different settings come in to play
 #	Optimize options
@@ -50,7 +48,6 @@ var _save_data := { #Make sure this is correct, ie: Open Tscns Only is not inclu
 	"locales" : "en,",
 	"prefix" : "$$",
 	"modified_only" : false,
-	"auto_on_save" : false,
 	"filler_strings" : "_",
 	"text_from_key" : true,
 	"clear_file" : false,
@@ -306,7 +303,6 @@ func _save_options(file_name : String):
 	_save_data.locales = $VBox/Grid/TextEdit_Locales.text
 	_save_data.prefix = $VBox/Grid/LineEdit_Prefix.text
 	_save_data.modified_only = $VBox/Grid/CheckBox_ModifiedOnly.pressed
-	_save_data.auto_on_save = $VBox/Grid/CheckBox_AutoRunOnSave.pressed
 	_save_data.filler_strings = $VBox/Grid/LineEdit_FillerStrings.text
 	_save_data.text_from_key = $VBox/Grid/CheckBox_TextFromKey.pressed
 	_save_data.clear_file = $VBox/Grid/CheckBox_ClearFile.pressed
@@ -318,6 +314,10 @@ func _save_options(file_name : String):
 	var file := File.new()
 	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
 	file.store_string(to_json(_save_data))
+	file.close()
+	#Personal Options: (Auto on save: likely best if only one member generates the translation file for version control)
+	file.open("user://string_keys_personal_options.skpo", File.WRITE)
+	file.store_var($VBox/Grid/CheckBox_AutoRunOnSave.pressed)
 	file.close()
 
 func _load_options(file_name : String):
@@ -334,12 +334,15 @@ func _load_options(file_name : String):
 	$VBox/Grid/TextEdit_Locales.text = _save_data.locales
 	$VBox/Grid/LineEdit_Prefix.text = _save_data.prefix
 	$VBox/Grid/CheckBox_ModifiedOnly.pressed = _save_data.modified_only
-	$VBox/Grid/CheckBox_AutoRunOnSave.pressed = _save_data.auto_on_save
 	$VBox/Grid/LineEdit_FillerStrings.text = _save_data.filler_strings
 	$VBox/Grid/CheckBox_TextFromKey.pressed = _save_data.text_from_key
 	$VBox/Grid/CheckBox_ClearFile.pressed = _save_data.clear_file
 	$VBox/Grid/CheckBox_RemoveUnused.pressed = _save_data.remove_unused
 	$VBox/Grid/CheckBox_PrintOutput.pressed = _save_data.print_to_output
+	#Personal Options: (Auto On Save)
+	file.open("user://string_keys_personal_options.skpo", File.READ)
+	$VBox/Grid/CheckBox_AutoRunOnSave.pressed = file.get_var()
+	file.close()
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ClearFile_toggled(button_pressed):
