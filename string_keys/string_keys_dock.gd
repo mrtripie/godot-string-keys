@@ -4,12 +4,11 @@ extends Node
 #TODO:  (Add this to README)
 #Auto on save warning, modified only, clear, and remove
 #make it create the file if it doesn't exist
-#Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes)
+#Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes, as long as there are no errors before)
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
 #a close() to every file.open()
 #Make it so that errors cause it to stop the process (return true/false based on success and use an if where called)
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
-#Hide and make sure certian options are disabled when other are enabled (modified only and clear file/remove unused!)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
@@ -352,7 +351,12 @@ func _on_CheckBox_RemoveUnused_toggled(button_pressed):
 	$VBox/RemoveUnusedWarning.visible = button_pressed
 
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
-	pass
+	$VBox/Grid/Label_ClearFile.visible = not button_pressed
+	$VBox/Grid/Label_RemoveUnused.visible = not button_pressed
+	$VBox/Grid/CheckBox_ClearFile.visible = not button_pressed
+	$VBox/Grid/CheckBox_RemoveUnused.visible = not button_pressed
+	$VBox/Grid/CheckBox_ClearFile.pressed = false
+	$VBox/Grid/CheckBox_RemoveUnused.pressed = false
 
 #Maybe warn to do full checks sometimes when using auto on save/modified only............................
 

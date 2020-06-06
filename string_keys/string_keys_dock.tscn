@@ -13,15 +13,15 @@ __meta__ = {
 }
 
 [node name="VBox" type="VBoxContainer" parent="."]
-margin_right = 320.0
-margin_bottom = 918.0
+margin_right = 308.0
+margin_bottom = 987.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Grid" type="GridContainer" parent="VBox"]
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 842.0
 columns = 2
 
@@ -36,7 +36,7 @@ text = "Translation File*"
 
 [node name="LineEdit_TranslationFile" type="LineEdit" parent="VBox/Grid"]
 margin_left = 115.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 text = "res://Translations/Translations.csv"
@@ -58,7 +58,7 @@ text = "Key Finding:"
 [node name="Control" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 28.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 78.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
@@ -78,7 +78,7 @@ to Check*"
 [node name="TextEdit_FileTypes" type="TextEdit" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 82.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 162.0
 rect_min_size = Vector2( 0, 80 )
 text = "tscn, tres, gd, cs,"
@@ -97,7 +97,7 @@ Ignore"
 [node name="TextEdit_PathsToIgnore" type="TextEdit" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 166.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 426.0
 rect_min_size = Vector2( 0, 260 )
 text = ".git, .import, addons, Levels/StringKeysTestLevels/ExtraTests"
@@ -128,7 +128,7 @@ text = "Locales*"
 [node name="TextEdit_Locales" type="TextEdit" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 430.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 510.0
 rect_min_size = Vector2( 0, 80 )
 text = "en,"
@@ -147,7 +147,7 @@ text = "Prefix*"
 [node name="LineEdit_Prefix" type="LineEdit" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 514.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 538.0
 size_flags_horizontal = 3
 text = "$$"
@@ -164,12 +164,11 @@ mouse_filter = 1
 text = "Modified Only"
 
 [node name="CheckBox_ModifiedOnly" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
+margin_left = 284.0
 margin_top = 542.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 566.0
 size_flags_horizontal = 8
-pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -183,12 +182,11 @@ mouse_filter = 1
 text = "Auto on Save"
 
 [node name="CheckBox_AutoRunOnSave" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
+margin_left = 284.0
 margin_top = 570.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 594.0
 size_flags_horizontal = 8
-pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -207,7 +205,7 @@ text = "CSV File Creation:"
 [node name="Control2" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 598.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 648.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
@@ -225,7 +223,7 @@ text = "Filler Strings*"
 [node name="LineEdit_FillerStrings" type="LineEdit" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 652.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 676.0
 size_flags_horizontal = 3
 text = "_"
@@ -242,9 +240,9 @@ mouse_filter = 1
 text = "Text From Key"
 
 [node name="CheckBox_TextFromKey" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
+margin_left = 284.0
 margin_top = 680.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 704.0
 size_flags_horizontal = 8
 pressed = true
@@ -264,9 +262,9 @@ mouse_filter = 1
 text = "Clear File"
 
 [node name="CheckBox_ClearFile" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
+margin_left = 284.0
 margin_top = 708.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 732.0
 size_flags_horizontal = 8
 pressed = true
@@ -284,11 +282,12 @@ mouse_filter = 1
 text = "Remove Unused"
 
 [node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
+margin_left = 284.0
 margin_top = 736.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 760.0
 size_flags_horizontal = 8
+pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -307,7 +306,7 @@ text = "Debug:"
 [node name="Control3" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
 margin_top = 764.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 814.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
@@ -323,9 +322,9 @@ mouse_filter = 1
 text = "Print to Output"
 
 [node name="CheckBox_PrintOutput" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
+margin_left = 284.0
 margin_top = 818.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 842.0
 size_flags_horizontal = 8
 pressed = true
@@ -335,23 +334,22 @@ __meta__ = {
 
 [node name="Button" type="Button" parent="VBox"]
 margin_top = 846.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 866.0
 text = "Create Translation File"
 
 [node name="ClearFileWarning" type="Label" parent="VBox"]
 margin_top = 870.0
-margin_right = 320.0
+margin_right = 308.0
 margin_bottom = 918.0
 custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
 text = "WARNING: Clear File will erase all previously made translations and generate a new file. Backup recommended"
 autowrap = true
 
 [node name="RemoveUnusedWarning" type="Label" parent="VBox"]
-visible = false
-margin_top = 372.0
-margin_right = 320.0
-margin_bottom = 437.0
+margin_top = 922.0
+margin_right = 308.0
+margin_bottom = 987.0
 custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
 text = "WARNING: Remove Unused removes all keys that StringTool didn't find, including ones that may actually be used in a file type it wasn't set to check. Backup recommended"
 autowrap = true
