@@ -14,7 +14,7 @@ __meta__ = {
 
 [node name="VBox" type="VBoxContainer" parent="."]
 margin_right = 320.0
-margin_bottom = 866.0
+margin_bottom = 918.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -100,7 +100,7 @@ margin_top = 166.0
 margin_right = 320.0
 margin_bottom = 426.0
 rect_min_size = Vector2( 0, 260 )
-text = ".git, .import, addons, "
+text = ".git, .import, addons, Levels/StringKeysTestLevels/ExtraTests"
 wrap_enabled = true
 caret_blink = true
 
@@ -169,7 +169,6 @@ margin_top = 542.0
 margin_right = 320.0
 margin_bottom = 566.0
 size_flags_horizontal = 8
-pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -268,6 +267,7 @@ margin_top = 708.0
 margin_right = 320.0
 margin_bottom = 732.0
 size_flags_horizontal = 8
+pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -337,17 +337,10 @@ margin_right = 320.0
 margin_bottom = 866.0
 text = "Create Translation File"
 
-[node name="ProgressBar" type="ProgressBar" parent="VBox"]
-visible = false
-margin_top = -84.0
-margin_right = 170.0
-margin_bottom = -70.0
-
 [node name="ClearFileWarning" type="Label" parent="VBox"]
-visible = false
-margin_top = 372.0
+margin_top = 870.0
 margin_right = 320.0
-margin_bottom = 420.0
+margin_bottom = 918.0
 custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
 text = "WARNING: Clear File will erase all previously made translations and generate a new file. Backup recommended"
 autowrap = true

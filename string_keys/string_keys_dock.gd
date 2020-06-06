@@ -5,12 +5,11 @@ extends Node
 #move auto on save to personal save file in User://
 #Auto on save warning, modified only, clear, and remove
 #make it create the file if it doesn't exist
-#Skip writing to csv file if there's no keys (still make it to the end to save file hashes)
+#Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes)
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
 #a close() to every file.open()
 #Make it so that errors cause it to stop the process (return true/false based on success and use an if where called)
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
-#Figure out what to do with progress bar
 #Hide and make sure certian options are disabled when other are enabled (modified only and clear file/remove unused!)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
@@ -38,7 +37,6 @@ extends Node
 #   "Category$$Test key number 2 \\back\\ slashes \\"
 
 var plugin : EditorPlugin
-var _working := false
 var _files_to_search = []
 var _allowed_formats = []
 var _ignored_paths = []
@@ -71,14 +69,7 @@ func _exit_tree():
 	_save_options("options.sko")
 
 func _on_Button_pressed():
-	if _working: #Cancel work..........................................Probably not needed..................
-		_done_working()
-	else: #Start working
-		#Display:
-		_working = true
-		$VBox/ProgressBar.show()
-		$VBox/Button.text = "Cancel..."
-		_work()
+	_work()
 
 func _work():
 	_save_options("options.sko")
@@ -91,10 +82,6 @@ func _work():
 	_done_working()
 
 func _done_working():
-	_working = false
-	$VBox/ProgressBar.hide()
-	$VBox/ProgressBar.value = 0
-	$VBox/Button.text = "Create Translation File"
 	_files_to_search = []
 	_allowed_formats = []
 	_ignored_paths = []
