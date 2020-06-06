@@ -4,7 +4,6 @@ extends Node
 #TODO:  (Add this to README)
 #See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
 #make it create the file if it doesn't exist
-#Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes, as long as there are no errors before)
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
 #a close() to every file.open()
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
@@ -95,7 +94,11 @@ func _find_files_to_search():
 	#allowed formats:
 	var _formats_unformatted = $VBox/Grid/TextEdit_FileTypes.text.split(",", false)
 	for f in _formats_unformatted:
-		_allowed_formats.append("." + f.strip_edges()) #add . and strip of spaces/new lines
+		f = f.strip_edges() #removes edges of spaces/new liens
+		if f.begins_with("."): #adds it and makes sure it starts with a .
+			_allowed_formats.append(f)
+		else:
+			_allowed_formats.append("." + f)
 	#ignored paths:
 	var _ign_paths_unformatted = $VBox/Grid/TextEdit_PathsToIgnore.text.split(",", false)
 	for p in _ign_paths_unformatted:
@@ -110,7 +113,7 @@ func _get_files_in_directory_recursive(path : String) -> Array:
 	var dir = Directory.new()
 	if dir.open(path) == OK:
 		var file_paths = []
-		dir.list_dir_begin(true, true) #Skip navigational and hidden, maybe shouldn't do hidden?
+		dir.list_dir_begin(true, false) #Skip navigational, not hidden
 		var current_file = dir.get_next()
 		while current_file != "":
 			if dir.current_is_dir(): #look into a sub directory
