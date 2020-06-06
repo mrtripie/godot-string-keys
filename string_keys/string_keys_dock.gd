@@ -18,10 +18,7 @@ extends Node
 #	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
 #	See if you can find a way to deal with a way to deal with modified when different settings come in to play
 #	Optimize options
-#	Only allow open tscns that aren't in ignored paths  
-#	Paths to only include rather than ignore as well
 #	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
-#	Option to automatically run on file save if performance is good, or add to list of modified files to check
 
 #LIKELY POTENTIAL ISSUES: (add to readme)
 #Back slash \ and other special issues might be able to confuse what parts of a file are strings
@@ -63,7 +60,7 @@ var _save_data := { #Make sure this is correct, ie: Open Tscns Only is not inclu
 
 func _enter_tree():
 	_load_options("options.sko") #.sko for current options, .skp for preset options
-	plugin.connect("resource_saved", self, "auto_on_save")
+	_clean_up_file_hashes_file()
 
 func _exit_tree():
 	_save_options("options.sko")
@@ -211,7 +208,6 @@ func _write_keys_to_csv_file(path: String):
 		var new_index := 0
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
 			var comparision = _old_keys[old_index][0].casecmp_to(_keys[new_index])
-			#print ("comparison: " + str(comparision)) ###################################################################
 			if comparision == -1: #add next old key
 				if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
 					_removed_keys.append(_old_keys[old_index][0])
@@ -233,11 +229,9 @@ func _write_keys_to_csv_file(path: String):
 			else:
 				_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 			old_index += 1
-			#print ("old")##########################################################################3
 		while new_index < _keys.size(): #If only new keys left, add new
 			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
 			new_index += 1
-			#print("new")#############################################################################
 		_print_if_allowed("StringKeys: Keys saved to .csv file")
 		if $VBox/Grid/CheckBox_RemoveUnused.pressed:
 			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
@@ -280,6 +274,18 @@ func _save_file_hashes(): #only do after everything runs error free
 	file.open("user://string_keys_file_hashes.skfh", File.WRITE)
 	file.store_var(_file_hashes)
 	file.close()
+
+func _clean_up_file_hashes_file(): #removes any files that don't exist anymore from file hashes file
+	var file := File.new()
+	if file.file_exists("user://string_keys_file_hashes.skfh"):
+		file.open("user://string_keys_file_hashes.skfh", File.READ)
+		_file_hashes = file.get_var()
+		for fn in _file_hashes.keys():
+			if not file.file_exists(fn):
+				_file_hashes.erase(fn)
+		file.close()
+		_save_file_hashes()
+		_file_hashes.clear()
 
 #Auto run on save:
 func auto_on_save(_resource : Resource):
@@ -356,5 +362,3 @@ func _append_array_to_array_unique(original: Array, addition: Array):
 	for a in addition:
 		if not original.has(a):
 			original.append(a)
-
-
