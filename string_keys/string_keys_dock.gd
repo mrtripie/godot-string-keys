@@ -337,21 +337,22 @@ func _load_options(file_name : String):
 	if file.file_exists("res://addons/string_keys/options/" + file_name):
 		file.open("res://addons/string_keys/options/" + file_name, File.READ)
 		_save_data = parse_json(file.get_as_text())
-	#set option buttons:
-	$VBox/Grid/LineEdit_TranslationFile.text = _save_data.translation_file
-	$VBox/Grid/TextEdit_FileTypes.text = _save_data.file_types_to_check
-	$VBox/Grid/TextEdit_PathsToIgnore.text = _save_data.paths_to_ignore
-	$VBox/Grid/TextEdit_Locales.text = _save_data.locales
-	$VBox/Grid/LineEdit_Prefix.text = _save_data.prefix
-	$VBox/Grid/CheckBox_ModifiedOnly.pressed = _save_data.modified_only
-	$VBox/Grid/LineEdit_FillerStrings.text = _save_data.filler_strings
-	$VBox/Grid/CheckBox_TextFromKey.pressed = _save_data.text_from_key
-	$VBox/Grid/CheckBox_ClearFile.pressed = _save_data.clear_file
-	$VBox/Grid/CheckBox_RemoveUnused.pressed = _save_data.remove_unused
-	$VBox/Grid/CheckBox_PrintOutput.pressed = _save_data.print_to_output
+		#set option buttons:
+		$VBox/Grid/LineEdit_TranslationFile.text = _save_data.translation_file
+		$VBox/Grid/TextEdit_FileTypes.text = _save_data.file_types_to_check
+		$VBox/Grid/TextEdit_PathsToIgnore.text = _save_data.paths_to_ignore
+		$VBox/Grid/TextEdit_Locales.text = _save_data.locales
+		$VBox/Grid/LineEdit_Prefix.text = _save_data.prefix
+		$VBox/Grid/CheckBox_ModifiedOnly.pressed = _save_data.modified_only
+		$VBox/Grid/LineEdit_FillerStrings.text = _save_data.filler_strings
+		$VBox/Grid/CheckBox_TextFromKey.pressed = _save_data.text_from_key
+		$VBox/Grid/CheckBox_ClearFile.pressed = _save_data.clear_file
+		$VBox/Grid/CheckBox_RemoveUnused.pressed = _save_data.remove_unused
+		$VBox/Grid/CheckBox_PrintOutput.pressed = _save_data.print_to_output
 	#Personal Options: (Auto On Save)
-	file.open("user://string_keys_personal_options.skpo", File.READ)
-	$VBox/Grid/CheckBox_AutoRunOnSave.pressed = file.get_var()
+	if file.file_exists("user://string_keys_personal_options.skpo"):
+		file.open("user://string_keys_personal_options.skpo", File.READ)
+		$VBox/Grid/CheckBox_AutoRunOnSave.pressed = file.get_var()
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
