@@ -29,7 +29,7 @@ columns = 2
 margin_top = 5.0
 margin_right = 111.0
 margin_bottom = 19.0
-hint_tooltip = "File name in CSV format.
+hint_tooltip = "File name and path in CSV format.
 If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
 text = "Translation File*"
@@ -88,7 +88,7 @@ caret_blink = true
 margin_top = 280.0
 margin_right = 111.0
 margin_bottom = 311.0
-hint_tooltip = "Paths from res:// to ignore, seperated by commas"
+hint_tooltip = "Paths from res:// to ignore, seperated by commas (don't include res://)"
 mouse_filter = 1
 text = "Paths to
 Ignore"
@@ -139,7 +139,11 @@ margin_top = 519.0
 margin_right = 111.0
 margin_bottom = 533.0
 hint_tooltip = "All strings that start with this will be added as a translation key.
-Should be something that you're sure won't be used on a string that should't be translated such as $$"
+Should be something that you're sure won't be used on a string that should't be translated such as $$
+Do not use a backslash ( \\ )
+
+You can write something before the prefix that will be ignored in Text From Key, that can be used to
+catagorize your keys, such as having all UI elements go like: \"UI{prefix}{text}\"  ex:  \"UI$$New Game\""
 mouse_filter = 1
 text = "Prefix*"
 
@@ -158,7 +162,14 @@ caret_blink_speed = 0.5
 margin_top = 547.0
 margin_right = 111.0
 margin_bottom = 561.0
-hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed"
+hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed
+
+Provides massive performance improvement for large projects, highly recommend.
+
+Remove Unused and Clear File are disabled with this on as they would erase all keys from unmodified files
+
+May be a good idea to disable and use Remove Unused (or Clear File if you've done no manual work)
+every once in a while to clean up keys that have been removed from the game"
 mouse_filter = 1
 text = "Modified Only"
 
@@ -176,7 +187,10 @@ __meta__ = {
 margin_top = 575.0
 margin_right = 111.0
 margin_bottom = 589.0
-hint_tooltip = "Should it automatically find all keys from a file you just saved?"
+hint_tooltip = "Should it automatically find all keys from a file you just saved?
+
+Makes saving scenes/scripts/resources slower, but shouldn't
+be too bad when your project isn't very big"
 mouse_filter = 1
 text = "Auto on Save"
 
@@ -234,7 +248,7 @@ caret_blink_speed = 0.5
 margin_top = 685.0
 margin_right = 111.0
 margin_bottom = 699.0
-hint_tooltip = "Generate an initial translation for the first listed locale from the key (by removing the prefix)"
+hint_tooltip = "Generate an initial translation for the first listed locale from the key (by removing the prefix and category before the prefix)"
 mouse_filter = 1
 text = "Text From Key"
 
@@ -255,7 +269,7 @@ margin_right = 111.0
 margin_bottom = 727.0
 hint_tooltip = "If set, it will clear the file and generate it from scratch.
 This is good when you haven't manually made any changes and are checking the whole project.
-Faster performance as it doesn't need to check. 
+Faster performance as it doesn't need to work with an old csv file. 
 Backup recommended"
 mouse_filter = 1
 text = "Clear File"
@@ -274,8 +288,8 @@ __meta__ = {
 margin_top = 741.0
 margin_right = 111.0
 margin_bottom = 755.0
-hint_tooltip = "Any keys in the file that aren't found by String Tool in your game will be removed.
-Be careful as there could be ones that are used, but StringTool wasn't set up to find anymore"
+hint_tooltip = "Any keys in the csv file that aren't found by StringKeys in your game will be removed.
+Be careful as there could be ones that are used, but StringKeys  wasn't set up to find anymore"
 mouse_filter = 1
 text = "Remove Unused"
 

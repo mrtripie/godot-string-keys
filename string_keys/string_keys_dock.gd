@@ -3,7 +3,6 @@ extends Node
 
 #TODO:  (Add this to README)
 #See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
-#Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Maybes:
 #	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
 #	See if you can find a way to deal with a way to deal with modified when different settings come in to play
