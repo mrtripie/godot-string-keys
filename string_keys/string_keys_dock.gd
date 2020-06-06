@@ -7,7 +7,6 @@ extends Node
 #Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes, as long as there are no errors before)
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
 #a close() to every file.open()
-#Make it so that errors cause it to stop the process (return true/false based on success and use an if where called)
 #Allow more flexibility with setting format (ex: allowing file formats to start with a . or not)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
@@ -69,9 +68,15 @@ func _work():
 	_find_files_to_search()
 	_track_modified_files()
 	_search_files_for_keys()
-	_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
-	_write_keys_to_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
-	_save_file_hashes()
+	#only continue if it actually has something to add, or remove
+	if _keys.size() > 0 or $VBox/Grid/CheckBox_ClearFile.pressed or $VBox/Grid/CheckBox_RemoveUnused.pressed:
+		if _get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text): #true = no errors, continue
+			if _write_keys_to_csv_file($VBox/Grid/LineEdit_TranslationFile.text):
+				_save_file_hashes() #Only run this if there were no errors, otherwise file will be incorrect
+				print("StringKeys succesful")
+	else:
+		_save_file_hashes() #Ran without error, but none of the modified files had changes to add
+		print("StringKeys no changes to add")
 	_done_working()
 
 func _done_working():
@@ -168,7 +173,7 @@ func _is_string_a_key(string : String) -> bool: #TODO: maybe a suffix
 	return string.find($VBox/Grid/LineEdit_Prefix.text) != -1
 
 #Saving to .csv file
-func _get_or_make_csv_file(path: String):
+func _get_or_make_csv_file(path: String) -> bool: #true if no errors
 	if path.get_file() != "": #Tries to make sure path is valid  TODO: needs improvement
 		if _csv_file.file_exists(path) and not $VBox/Grid/CheckBox_ClearFile.pressed:
 			_csv_file.open(path, File.READ)
@@ -181,8 +186,10 @@ func _get_or_make_csv_file(path: String):
 				_old_keys.append(_csv_file.get_csv_line() as Array)
 	else:
 		print("Error: String Keys \"Translation File\" is invalid file name")
+		return false #error
+	return true #made it to end without error
 
-func _write_keys_to_csv_file(path: String):
+func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 	#Locales:
 	var locales_unformatted = $VBox/Grid/TextEdit_Locales.text.split(",", false)
 	var locales_index := 0
@@ -233,6 +240,8 @@ func _write_keys_to_csv_file(path: String):
 			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
 	else:
 		print("Error: StringKeys locales don't match .csv file, failed")
+		return false #error
+	return true #made it to the end without error
 
 func _text_from_key(key : String) -> String:
 	if $VBox/Grid/CheckBox_TextFromKey.pressed:
