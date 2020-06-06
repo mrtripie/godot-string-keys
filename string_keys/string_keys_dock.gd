@@ -1,6 +1,8 @@
 tool
 extends Node
 
+#Make sure to have close()
+
 var plugin : EditorPlugin
 var _files_to_search = []
 var _allowed_formats = []
@@ -8,7 +10,6 @@ var _ignored_paths = []
 var _file_hashes : Dictionary #used to check if a file is modified
 var _keys = []
 var _locales = []
-var _csv_file = File.new()
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys = []
 
@@ -51,7 +52,6 @@ func _done_working():
 	_file_hashes.clear()
 	_keys = []
 	_locales = []
-	_csv_file.close()
 	_old_keys = []
 	_removed_keys = []
 
@@ -115,6 +115,7 @@ func _find_keys_in_file(file_path : String) -> Array:
 	var file = File.new()
 	file.open(file_path, File.READ)
 	var file_text : String = file.get_as_text()
+	file.close()
 	var found_keys = []
 	var is_in_string := false
 	var found_string : String
@@ -144,15 +145,17 @@ func _is_string_a_key(string : String) -> bool:
 #Saving to .csv file
 func _get_or_make_csv_file(path: String) -> bool: #true if no errors
 	if path.get_file() != "": #Tries to make sure path is valid  TODO: needs improvement
-		if _csv_file.file_exists(path) and not $VBox/Grid/CheckBox_ClearFile.pressed:
-			_csv_file.open(path, File.READ)
-			_locales = _csv_file.get_csv_line() as Array #first line for locales
+		var csv_file = File.new()
+		if csv_file.file_exists(path) and not $VBox/Grid/CheckBox_ClearFile.pressed:
+			csv_file.open(path, File.READ)
+			_locales = csv_file.get_csv_line() as Array #first line for locales
 			_locales.pop_front() #gets rid of the "key" in the first column
-			var _file_length = _csv_file.get_len()
+			var _file_length = csv_file.get_len()
 			while true:
-				if _csv_file.get_position() == _file_length:
+				if csv_file.get_position() == _file_length:
 					break
-				_old_keys.append(_csv_file.get_csv_line() as Array)
+				_old_keys.append(csv_file.get_csv_line() as Array)
+			csv_file.close()
 		else:
 			#Creates the directory if it doesnt exist (File.WRITE only auto makes file if directory exists)
 			Directory.new().make_dir_recursive(path.get_base_dir())
@@ -177,8 +180,9 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 	_print_if_allowed("\nStringKeys locales: " + str(_locales))
 	#Generating .csv:
 	if locales_are_valid:
-		_csv_file.open(path, File.WRITE)
-		_csv_file.store_csv_line(["key"] + _locales) #First line with locales
+		var csv_file = File.new()
+		csv_file.open(path, File.WRITE)
+		csv_file.store_csv_line(["key"] + _locales) #First line with locales
 		var old_index := 0
 		var new_index := 0
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
@@ -187,13 +191,13 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 				if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
 					_removed_keys.append(_old_keys[old_index][0])
 				else:
-					_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
+					csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 				old_index += 1
 			elif comparision == 1: #add next new key
-				_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
+				csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
 				new_index += 1
 			elif comparision == 0: #keys are equal, skip new and use old to keep manual work
-				_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
+				csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 				old_index += 1
 				new_index += 1
 			else:
@@ -202,11 +206,12 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 			if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
 				_removed_keys.append(_old_keys[old_index][0])
 			else:
-				_csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
+				csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 			old_index += 1
 		while new_index < _keys.size(): #If only new keys left, add new
-			_csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
+			csv_file.store_csv_line([_keys[new_index], _text_from_key(_keys[new_index])] + _make_filler_strings(2))
 			new_index += 1
+		csv_file.close()
 		_print_if_allowed("StringKeys: Keys saved to .csv file")
 		if $VBox/Grid/CheckBox_RemoveUnused.pressed:
 			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
@@ -294,9 +299,11 @@ func _save_options(file_name : String):
 	var file := File.new()
 	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
 	file.store_string(to_json(save_data))
+	file.close()
 	#Personal Options: (Auto on save: likely best if only one member generates the csv file for version control)
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
 	file.store_var($VBox/Grid/CheckBox_AutoRunOnSave.pressed)
+	file.close()
 
 func _load_options(file_name : String):
 	#load options:
@@ -304,6 +311,7 @@ func _load_options(file_name : String):
 	if file.file_exists("res://addons/string_keys/options/" + file_name):
 		file.open("res://addons/string_keys/options/" + file_name, File.READ)
 		var save_data : Dictionary = parse_json(file.get_as_text())
+		file.close()
 		#set option buttons:
 		$VBox/Grid/LineEdit_TranslationFile.text = save_data.translation_file
 		$VBox/Grid/TextEdit_FileTypes.text = save_data.file_types_to_check
@@ -320,6 +328,7 @@ func _load_options(file_name : String):
 	if file.file_exists("user://string_keys_personal_options.skpo"):
 		file.open("user://string_keys_personal_options.skpo", File.READ)
 		$VBox/Grid/CheckBox_AutoRunOnSave.pressed = file.get_var()
+		file.close()
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):

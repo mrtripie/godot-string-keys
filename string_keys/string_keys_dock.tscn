@@ -30,7 +30,9 @@ margin_top = 5.0
 margin_right = 111.0
 margin_bottom = 19.0
 hint_tooltip = "File name and path in CSV format.
-If it exists it'll be modified, if it doesn't it'll be created."
+If it exists it'll be modified, if it doesn't it'll be created.
+
+Ex: res://localization/translations.csv"
 mouse_filter = 1
 text = "Translation File*"
 
@@ -168,6 +170,8 @@ Provides massive performance improvement for large projects, highly recommend.
 
 Remove Unused and Clear File are disabled with this on as they would erase all keys from unmodified files
 
+May need to disable to do a full run if a key isn't getting added (the file keeping track of what files have been changed may be out of sync)
+
 May be a good idea to disable and use Remove Unused (or Clear File if you've done no manual work)
 every once in a while to clean up keys that have been removed from the game"
 mouse_filter = 1
@@ -190,7 +194,9 @@ margin_bottom = 589.0
 hint_tooltip = "Should it automatically find all keys from a file you just saved?
 
 Makes saving scenes/scripts/resources slower, but shouldn't
-be too bad when your project isn't very big"
+be too bad when your project isn't very big
+
+Saved in seperate personal options file so that it doesn't automatically run on every team member's computer"
 mouse_filter = 1
 text = "Auto on Save"
 
