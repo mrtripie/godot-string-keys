@@ -14,7 +14,7 @@ __meta__ = {
 
 [node name="VBox" type="VBoxContainer" parent="."]
 margin_right = 320.0
-margin_bottom = 810.0
+margin_bottom = 866.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -22,7 +22,7 @@ __meta__ = {
 
 [node name="Grid" type="GridContainer" parent="VBox"]
 margin_right = 320.0
-margin_bottom = 786.0
+margin_bottom = 842.0
 columns = 2
 
 [node name="Label_TranslationFile" type="Label" parent="VBox/Grid"]
@@ -80,7 +80,7 @@ margin_top = 82.0
 margin_right = 320.0
 margin_bottom = 162.0
 rect_min_size = Vector2( 0, 80 )
-text = "tscn, tres, gd, .cs,"
+text = "tscn, tres, gd, cs,"
 wrap_enabled = true
 caret_blink = true
 
@@ -99,7 +99,7 @@ margin_top = 166.0
 margin_right = 320.0
 margin_bottom = 426.0
 rect_min_size = Vector2( 0, 260 )
-text = ".git, .import, addons, Levels/StringKeysTestLevels/ExtraTests"
+text = ".git, .import, addons,"
 wrap_enabled = true
 caret_blink = true
 
@@ -130,7 +130,7 @@ margin_top = 430.0
 margin_right = 320.0
 margin_bottom = 510.0
 rect_min_size = Vector2( 0, 80 )
-text = "en,"
+text = "en"
 wrap_enabled = true
 caret_blink = true
 
@@ -168,7 +168,6 @@ margin_top = 542.0
 margin_right = 320.0
 margin_bottom = 566.0
 size_flags_horizontal = 8
-pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -251,7 +250,6 @@ __meta__ = {
 }
 
 [node name="Label_ClearFile" type="Label" parent="VBox/Grid"]
-visible = false
 margin_top = 713.0
 margin_right = 111.0
 margin_bottom = 727.0
@@ -263,7 +261,6 @@ mouse_filter = 1
 text = "Clear File"
 
 [node name="CheckBox_ClearFile" type="CheckBox" parent="VBox/Grid"]
-visible = false
 margin_left = 296.0
 margin_top = 708.0
 margin_right = 320.0
@@ -274,7 +271,6 @@ __meta__ = {
 }
 
 [node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
-visible = false
 margin_top = 741.0
 margin_right = 111.0
 margin_bottom = 755.0
@@ -284,7 +280,6 @@ mouse_filter = 1
 text = "Remove Unused"
 
 [node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
-visible = false
 margin_left = 296.0
 margin_top = 736.0
 margin_right = 320.0
@@ -295,9 +290,9 @@ __meta__ = {
 }
 
 [node name="Label_Debug" type="Label" parent="VBox/Grid"]
-margin_top = 744.0
+margin_top = 800.0
 margin_right = 111.0
-margin_bottom = 758.0
+margin_bottom = 814.0
 hint_tooltip = "File name in CSV format.
 If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
@@ -307,37 +302,36 @@ text = "Debug:"
 
 [node name="Control3" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
-margin_top = 708.0
+margin_top = 764.0
 margin_right = 320.0
-margin_bottom = 758.0
+margin_bottom = 814.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_PrintOutput" type="Label" parent="VBox/Grid"]
-margin_top = 767.0
+margin_top = 823.0
 margin_right = 111.0
-margin_bottom = 781.0
+margin_bottom = 837.0
 hint_tooltip = "Should StringKeys print to the output tab things like what files it searched and what keys it found? It will print errors either way."
 mouse_filter = 1
 text = "Print to Output"
 
 [node name="CheckBox_PrintOutput" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 762.0
+margin_top = 818.0
 margin_right = 320.0
-margin_bottom = 786.0
+margin_bottom = 842.0
 size_flags_horizontal = 8
-pressed = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Button" type="Button" parent="VBox"]
-margin_top = 790.0
+margin_top = 846.0
 margin_right = 320.0
-margin_bottom = 810.0
+margin_bottom = 866.0
 text = "Create Translation File"
 
 [node name="AutoOnSaveWarning" type="Label" parent="VBox"]

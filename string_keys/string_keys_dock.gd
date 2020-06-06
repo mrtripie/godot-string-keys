@@ -3,8 +3,6 @@ extends Node
 
 #TODO:  (Add this to README)
 #See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
-#make it create the file if it doesn't exist
-#a close() to every file.open()
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
 #Check that all comments should be there
 #Maybes:
@@ -36,7 +34,7 @@ var _locales = []
 var _csv_file = File.new()
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys = []
-var _save_data := { #Make sure this is correct, ie: Open Tscns Only is not included#############################
+var _save_data := {
 	"translation_file" : "",
 	"file_types_to_check" : "tscn, tres, gd, cs,",
 	"paths_to_ignore" : ".git, .import, addons,",
@@ -186,6 +184,9 @@ func _get_or_make_csv_file(path: String) -> bool: #true if no errors
 				if _csv_file.get_position() == _file_length:
 					break
 				_old_keys.append(_csv_file.get_csv_line() as Array)
+		else:
+			#Creates the directory if it doesnt exist (File.WRITE only auto makes file if directory exists)
+			Directory.new().make_dir_recursive(path.get_base_dir())
 	else:
 		print("Error: String Keys \"Translation File\" is invalid file name")
 		return false #error
@@ -324,11 +325,9 @@ func _save_options(file_name : String):
 	var file := File.new()
 	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
 	file.store_string(to_json(_save_data))
-	file.close()
 	#Personal Options: (Auto on save: likely best if only one member generates the csv file for version control)
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
 	file.store_var($VBox/Grid/CheckBox_AutoRunOnSave.pressed)
-	file.close()
 
 func _load_options(file_name : String):
 	#load options:
@@ -336,7 +335,6 @@ func _load_options(file_name : String):
 	if file.file_exists("res://addons/string_keys/options/" + file_name):
 		file.open("res://addons/string_keys/options/" + file_name, File.READ)
 		_save_data = parse_json(file.get_as_text())
-		file.close()
 	#set option buttons:
 	$VBox/Grid/LineEdit_TranslationFile.text = _save_data.translation_file
 	$VBox/Grid/TextEdit_FileTypes.text = _save_data.file_types_to_check
@@ -352,7 +350,6 @@ func _load_options(file_name : String):
 	#Personal Options: (Auto On Save)
 	file.open("user://string_keys_personal_options.skpo", File.READ)
 	$VBox/Grid/CheckBox_AutoRunOnSave.pressed = file.get_var()
-	file.close()
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
