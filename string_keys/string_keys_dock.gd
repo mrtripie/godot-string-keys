@@ -4,7 +4,6 @@ extends Node
 #TODO:  (Add this to README)
 #See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
 #Check all Tooltips are accurate and make sure to list what is allowed (IE: No \ in prefix/suffix)
-#Check that all comments should be there
 #Maybes:
 #	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
 #	See if you can find a way to deal with a way to deal with modified when different settings come in to play
@@ -49,11 +48,16 @@ var _save_data := {
 }
 
 func _enter_tree():
-	_load_options("options.sko") #.sko for current options, .skp for preset options
-	_clean_up_file_hashes_file()
+	#Makes sure its not running in the scene editor when editing the dock ui scene
+	#NOTE: MAY CHANGE IN FUTURE GODOT VERSIONS
+	if get_parent().get_class() == "TabContainer":
+		_load_options("options.sko")
+		_clean_up_file_hashes_file()
+		plugin.connect("resource_saved", self, "_auto_on_save")
 
 func _exit_tree():
-	_save_options("options.sko")
+	if get_parent().get_class() == "TabContainer": #same as _enter_tree
+		_save_options("options.sko")
 
 func _on_Button_pressed():
 	_work()
@@ -169,7 +173,7 @@ func _find_keys_in_file(file_path : String) -> Array:
 					can_leave_string = true #can always leave if last wasn't a \
 	return found_keys
 
-func _is_string_a_key(string : String) -> bool: #TODO: maybe a suffix
+func _is_string_a_key(string : String) -> bool:
 	return string.find($VBox/Grid/LineEdit_Prefix.text) != -1
 
 #Saving to .csv file
@@ -296,7 +300,7 @@ func _clean_up_file_hashes_file(): #removes any files that don't exist anymore f
 		_file_hashes.clear()
 
 #Auto run on save:
-func auto_on_save(_resource : Resource):
+func _auto_on_save(_resource : Resource):
 	#resource_saved signal is BEFORE the save, waiting until the filesytem has channged
 	#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
 	#work because when it changes the csv file, making it run again
@@ -320,8 +324,7 @@ func _save_options(file_name : String):
 	_save_data.remove_unused = $VBox/Grid/CheckBox_RemoveUnused.pressed
 	_save_data.print_to_output = $VBox/Grid/CheckBox_PrintOutput.pressed
 	#save options:
-	var dir := Directory.new()
-	dir.make_dir_recursive("res://addons/string_keys/options/")
+	Directory.new().make_dir_recursive("res://addons/string_keys/options/")
 	var file := File.new()
 	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
 	file.store_string(to_json(_save_data))
@@ -369,10 +372,8 @@ func _on_CheckBox_ClearFile_toggled(button_pressed):
 func _on_CheckBox_RemoveUnused_toggled(button_pressed):
 	$VBox/RemoveUnusedWarning.visible = button_pressed
 
-#Maybe warn to do full checks sometimes when using auto on save/modified only............................
-
 #Other:
-func _print_if_allowed(thing): ##########################################################TODO Option
+func _print_if_allowed(thing):
 	if $VBox/Grid/CheckBox_PrintOutput.pressed:
 		print(thing)
 
@@ -380,5 +381,3 @@ func _append_array_to_array_unique(original: Array, addition: Array):
 	for a in addition:
 		if not original.has(a):
 			original.append(a)
-
-
