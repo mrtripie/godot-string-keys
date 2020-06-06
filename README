@@ -1,0 +1,21 @@
+#TODO: 
+#Maybes:
+#	See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
+#	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
+#	See if you can find a way to deal with a way to deal with modified when different settings come in to play
+#	Optimize options
+#	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
+
+#LIKELY POTENTIAL ISSUESS
+#Back slash \ and other special issues might be able to confuse what parts of a file are strings
+#Certian situations may cause a problem when using an old .csv file as an input
+#Probably shouldn't merge 2 members versions in version control
+
+#KNOWN ISSUES:
+#2 backslashes \\ in a row in a translation will be read by godot as 1, even though the generated file appears to be correct
+
+#FORMATTING IN CODE: 
+#	"$$This is a simple example"
+#	"Cat$$This example has a category"
+#	"$$This is a \"quote\""
+#	"$$\\back\\slashes\\"

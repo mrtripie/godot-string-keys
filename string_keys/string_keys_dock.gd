@@ -1,27 +1,6 @@
 tool
 extends Node
 
-#TODO:  (Add this to README)
-#See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
-#Maybes:
-#	Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
-#	See if you can find a way to deal with a way to deal with modified when different settings come in to play
-#	Optimize options
-#	Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res
-
-#LIKELY POTENTIAL ISSUES: (add to readme)
-#Back slash \ and other special issues might be able to confuse what parts of a file are strings
-#Certian situations may cause a problem when using an old .csv file as an input
-#Probably shouldn't merge 2 members versions in version control
-
-#KNOWN ISSUES:
-#2 backslashes \\ in a row in a translation will be read by godot as 1, even though the generated file appears to be correct
-
-#Formatting in code: (maybe add to readme)
-#	"$$This is a simple test"
-#	"$$This is a test key \"Quote\""
-#   "Category$$Test key number 2 \\back\\ slashes \\"
-
 var plugin : EditorPlugin
 var _files_to_search = []
 var _allowed_formats = []
@@ -32,19 +11,6 @@ var _locales = []
 var _csv_file = File.new()
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys = []
-var _save_data := {
-	"translation_file" : "",
-	"file_types_to_check" : "tscn, tres, gd, cs,",
-	"paths_to_ignore" : ".git, .import, addons,",
-	"locales" : "en,",
-	"prefix" : "$$",
-	"modified_only" : false,
-	"filler_strings" : "_",
-	"text_from_key" : true,
-	"clear_file" : false,
-	"remove_unused" : false,
-	"print_to_output" : false,
-}
 
 func _enter_tree():
 	#Makes sure its not running in the scene editor when editing the dock ui scene
@@ -311,22 +277,23 @@ func _auto_on_save(_resource : Resource):
 #Saving/loading options:
 func _save_options(file_name : String):
 	#set options from buttons:
-	_save_data.translation_file = $VBox/Grid/LineEdit_TranslationFile.text
-	_save_data.file_types_to_check = $VBox/Grid/TextEdit_FileTypes.text
-	_save_data.paths_to_ignore = $VBox/Grid/TextEdit_PathsToIgnore.text
-	_save_data.locales = $VBox/Grid/TextEdit_Locales.text
-	_save_data.prefix = $VBox/Grid/LineEdit_Prefix.text
-	_save_data.modified_only = $VBox/Grid/CheckBox_ModifiedOnly.pressed
-	_save_data.filler_strings = $VBox/Grid/LineEdit_FillerStrings.text
-	_save_data.text_from_key = $VBox/Grid/CheckBox_TextFromKey.pressed
-	_save_data.clear_file = $VBox/Grid/CheckBox_ClearFile.pressed
-	_save_data.remove_unused = $VBox/Grid/CheckBox_RemoveUnused.pressed
-	_save_data.print_to_output = $VBox/Grid/CheckBox_PrintOutput.pressed
+	var save_data : Dictionary
+	save_data.translation_file = $VBox/Grid/LineEdit_TranslationFile.text
+	save_data.file_types_to_check = $VBox/Grid/TextEdit_FileTypes.text
+	save_data.paths_to_ignore = $VBox/Grid/TextEdit_PathsToIgnore.text
+	save_data.locales = $VBox/Grid/TextEdit_Locales.text
+	save_data.prefix = $VBox/Grid/LineEdit_Prefix.text
+	save_data.modified_only = $VBox/Grid/CheckBox_ModifiedOnly.pressed
+	save_data.filler_strings = $VBox/Grid/LineEdit_FillerStrings.text
+	save_data.text_from_key = $VBox/Grid/CheckBox_TextFromKey.pressed
+	save_data.clear_file = $VBox/Grid/CheckBox_ClearFile.pressed
+	save_data.remove_unused = $VBox/Grid/CheckBox_RemoveUnused.pressed
+	save_data.print_to_output = $VBox/Grid/CheckBox_PrintOutput.pressed
 	#save options:
 	Directory.new().make_dir_recursive("res://addons/string_keys/options/")
 	var file := File.new()
 	file.open("res://addons/string_keys/options/" + file_name, File.WRITE)
-	file.store_string(to_json(_save_data))
+	file.store_string(to_json(save_data))
 	#Personal Options: (Auto on save: likely best if only one member generates the csv file for version control)
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
 	file.store_var($VBox/Grid/CheckBox_AutoRunOnSave.pressed)
@@ -336,19 +303,19 @@ func _load_options(file_name : String):
 	var file := File.new()
 	if file.file_exists("res://addons/string_keys/options/" + file_name):
 		file.open("res://addons/string_keys/options/" + file_name, File.READ)
-		_save_data = parse_json(file.get_as_text())
+		var save_data : Dictionary = parse_json(file.get_as_text())
 		#set option buttons:
-		$VBox/Grid/LineEdit_TranslationFile.text = _save_data.translation_file
-		$VBox/Grid/TextEdit_FileTypes.text = _save_data.file_types_to_check
-		$VBox/Grid/TextEdit_PathsToIgnore.text = _save_data.paths_to_ignore
-		$VBox/Grid/TextEdit_Locales.text = _save_data.locales
-		$VBox/Grid/LineEdit_Prefix.text = _save_data.prefix
-		$VBox/Grid/CheckBox_ModifiedOnly.pressed = _save_data.modified_only
-		$VBox/Grid/LineEdit_FillerStrings.text = _save_data.filler_strings
-		$VBox/Grid/CheckBox_TextFromKey.pressed = _save_data.text_from_key
-		$VBox/Grid/CheckBox_ClearFile.pressed = _save_data.clear_file
-		$VBox/Grid/CheckBox_RemoveUnused.pressed = _save_data.remove_unused
-		$VBox/Grid/CheckBox_PrintOutput.pressed = _save_data.print_to_output
+		$VBox/Grid/LineEdit_TranslationFile.text = save_data.translation_file
+		$VBox/Grid/TextEdit_FileTypes.text = save_data.file_types_to_check
+		$VBox/Grid/TextEdit_PathsToIgnore.text = save_data.paths_to_ignore
+		$VBox/Grid/TextEdit_Locales.text = save_data.locales
+		$VBox/Grid/LineEdit_Prefix.text = save_data.prefix
+		$VBox/Grid/CheckBox_ModifiedOnly.pressed = save_data.modified_only
+		$VBox/Grid/LineEdit_FillerStrings.text = save_data.filler_strings
+		$VBox/Grid/CheckBox_TextFromKey.pressed = save_data.text_from_key
+		$VBox/Grid/CheckBox_ClearFile.pressed = save_data.clear_file
+		$VBox/Grid/CheckBox_RemoveUnused.pressed = save_data.remove_unused
+		$VBox/Grid/CheckBox_PrintOutput.pressed = save_data.print_to_output
 	#Personal Options: (Auto On Save)
 	if file.file_exists("user://string_keys_personal_options.skpo"):
 		file.open("user://string_keys_personal_options.skpo", File.READ)
