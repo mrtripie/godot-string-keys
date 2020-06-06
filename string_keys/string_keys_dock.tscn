@@ -100,7 +100,7 @@ margin_top = 166.0
 margin_right = 320.0
 margin_bottom = 426.0
 rect_min_size = Vector2( 0, 260 )
-text = ".git, .import, addons, Levels/StringKeysTestLevels"
+text = ".git, .import, addons, "
 wrap_enabled = true
 caret_blink = true
 
@@ -291,7 +291,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label_Other" type="Label" parent="VBox/Grid"]
+[node name="Label_Debug" type="Label" parent="VBox/Grid"]
 margin_top = 800.0
 margin_right = 111.0
 margin_bottom = 814.0
@@ -300,7 +300,7 @@ If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
 size_flags_vertical = 8
 custom_colors/font_color = Color( 0.513726, 0.639216, 0.823529, 1 )
-text = "Other:"
+text = "Debug:"
 
 [node name="Control3" type="Control" parent="VBox/Grid"]
 margin_left = 115.0

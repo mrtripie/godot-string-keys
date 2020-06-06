@@ -2,7 +2,6 @@ tool
 extends Node
 
 #TODO:  (Add this to README)
-#Clear File is causeing error
 #move auto on save to personal save file in User://
 #Auto on save warning, modified only, clear, and remove
 #make it create the file if it doesn't exist
@@ -87,7 +86,7 @@ func _work():
 	_track_modified_files()
 	_search_files_for_keys()
 	_get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
-	_write_keys_to_csv_file()
+	_write_keys_to_csv_file($VBox/Grid/LineEdit_TranslationFile.text)
 	_save_file_hashes()
 	_done_working()
 
@@ -203,7 +202,7 @@ func _get_or_make_csv_file(path: String):
 	else:
 		print("Error: String Keys \"Translation File\" is invalid file name")
 
-func _write_keys_to_csv_file():
+func _write_keys_to_csv_file(path: String):
 	#Locales:
 	var locales_unformatted = $VBox/Grid/TextEdit_Locales.text.split(",", false)
 	var locales_index := 0
@@ -219,7 +218,7 @@ func _write_keys_to_csv_file():
 	_print_if_allowed("\nStringKeys locales: " + str(_locales))
 	#Generating .csv:
 	if locales_are_valid:
-		_csv_file.open(_csv_file.get_path(), File.WRITE)
+		_csv_file.open(path, File.WRITE)
 		_csv_file.store_csv_line(["key"] + _locales) #First line with locales
 		var old_index := 0
 		var new_index := 0
