@@ -1,7 +1,19 @@
 tool
 extends Node
 
-#Make sure to have close()
+#option nodes:
+onready var LineEdit_TranslationFile = $VBox/Grid/LineEdit_TranslationFile
+onready var TextEdit_FileTypes = $VBox/Grid/TextEdit_FileTypes
+onready var TextEdit_PathsToIgnore = $VBox/Grid/TextEdit_PathsToIgnore
+onready var TextEdit_Locales = $VBox/Grid/Label_Locales
+onready var LineEdit_Prefix = $VBox/Grid/LineEdit_Prefix
+onready var CheckBox_ModifiedOnly = $VBox/Grid/CheckBox_ModifiedOnly
+onready var CheckBox_AutoRunOnSave = $VBox/Grid/CheckBox_AutoRunOnSave
+onready var LineEdit_FillerStrings = $VBox/Grid/LineEdit_FillerStrings
+onready var CheckBox_TextFromKey = $VBox/Grid/CheckBox_TextFromKey
+onready var CheckBox_ClearFile = $VBox/Grid/CheckBox_ClearFile
+onready var CheckBox_RemoveUnused = $VBox/Grid/CheckBox_RemoveUnused
+onready var CheckBox_PrintOutput = $VBox/Grid/CheckBox_PrintOutput
 
 var plugin : EditorPlugin
 var _files_to_search = []
@@ -13,7 +25,7 @@ var _locales = []
 var _old_keys = [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys = []
 
-func _enter_tree():
+func _ready():
 	#Makes sure its not running in the scene editor when editing the dock ui scene
 	#NOTE: MAY CHANGE IN FUTURE GODOT VERSIONS
 	if get_parent().get_class() == "TabContainer":
@@ -22,7 +34,7 @@ func _enter_tree():
 		plugin.connect("resource_saved", self, "_auto_on_save")
 
 func _exit_tree():
-	if get_parent().get_class() == "TabContainer": #same as _enter_tree
+	if get_parent().get_class() == "TabContainer": #same as _ready
 		_save_options("options.sko")
 
 func _on_Button_pressed():
@@ -34,9 +46,9 @@ func _work():
 	_track_modified_files()
 	_search_files_for_keys()
 	#only continue if it actually has something to add, or remove
-	if _keys.size() > 0 or $VBox/Grid/CheckBox_ClearFile.pressed or $VBox/Grid/CheckBox_RemoveUnused.pressed:
-		if _get_or_make_csv_file($VBox/Grid/LineEdit_TranslationFile.text): #true = no errors, continue
-			if _write_keys_to_csv_file($VBox/Grid/LineEdit_TranslationFile.text):
+	if _keys.size() > 0 or CheckBox_ClearFile.pressed or CheckBox_RemoveUnused.pressed:
+		if _get_or_make_csv_file(LineEdit_TranslationFile.text): #true = no errors, continue
+			if _write_keys_to_csv_file(LineEdit_TranslationFile.text):
 				_save_file_hashes() #Only run this if there were no errors, otherwise file will be incorrect
 				plugin.get_editor_interface().get_resource_filesystem().scan() #Triggers reimport of csv file
 				print("StringKeys succesful")
@@ -58,7 +70,7 @@ func _done_working():
 #Finding files:
 func _find_files_to_search(): 
 	#allowed formats:
-	var _formats_unformatted = $VBox/Grid/TextEdit_FileTypes.text.split(",", false)
+	var _formats_unformatted = TextEdit_FileTypes.text.split(",", false)
 	for f in _formats_unformatted:
 		f = f.strip_edges() #removes edges of spaces/new liens
 		if f.begins_with("."): #adds it and makes sure it starts with a .
@@ -66,7 +78,7 @@ func _find_files_to_search():
 		else:
 			_allowed_formats.append("." + f)
 	#ignored paths:
-	var _ign_paths_unformatted = $VBox/Grid/TextEdit_PathsToIgnore.text.split(",", false)
+	var _ign_paths_unformatted = TextEdit_PathsToIgnore.text.split(",", false)
 	for p in _ign_paths_unformatted:
 		_ignored_paths.append("res://" + p.strip_edges()) #add res and strip spaces/new lines
 	#search:
@@ -140,13 +152,13 @@ func _find_keys_in_file(file_path : String) -> Array:
 	return found_keys
 
 func _is_string_a_key(string : String) -> bool:
-	return string.find($VBox/Grid/LineEdit_Prefix.text) != -1
+	return string.find(LineEdit_Prefix.text) != -1
 
 #Saving to .csv file
 func _get_or_make_csv_file(path: String) -> bool: #true if no errors
 	if path.get_file() != "": #Tries to make sure path is valid  TODO: needs improvement
 		var csv_file = File.new()
-		if csv_file.file_exists(path) and not $VBox/Grid/CheckBox_ClearFile.pressed:
+		if csv_file.file_exists(path) and not CheckBox_ClearFile.pressed:
 			csv_file.open(path, File.READ)
 			_locales = csv_file.get_csv_line() as Array #first line for locales
 			_locales.pop_front() #gets rid of the "key" in the first column
@@ -166,7 +178,7 @@ func _get_or_make_csv_file(path: String) -> bool: #true if no errors
 
 func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 	#Locales:
-	var locales_unformatted = $VBox/Grid/TextEdit_Locales.text.split(",", false)
+	var locales_unformatted = TextEdit_Locales.text.split(",", false)
 	var locales_index := 0
 	var locales_are_valid := true
 	for l in locales_unformatted:
@@ -188,7 +200,7 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 		while old_index < _old_keys.size() and new_index < _keys.size(): #Both left, compare new and old and add in alphabetical order
 			var comparision = _old_keys[old_index][0].casecmp_to(_keys[new_index])
 			if comparision == -1: #add next old key
-				if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
+				if (not _keys.has(_old_keys[old_index])) and CheckBox_RemoveUnused.pressed:
 					_removed_keys.append(_old_keys[old_index][0])
 				else:
 					csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
@@ -203,7 +215,7 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 			else:
 				print ("Error: StringKeys old key comparison failed")
 		while old_index < _old_keys.size(): #If only old keys left, add old
-			if (not _keys.has(_old_keys[old_index])) and $VBox/Grid/CheckBox_RemoveUnused.pressed:
+			if (not _keys.has(_old_keys[old_index])) and CheckBox_RemoveUnused.pressed:
 				_removed_keys.append(_old_keys[old_index][0])
 			else:
 				csv_file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
@@ -213,7 +225,7 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 			new_index += 1
 		csv_file.close()
 		_print_if_allowed("StringKeys: Keys saved to .csv file")
-		if $VBox/Grid/CheckBox_RemoveUnused.pressed:
+		if CheckBox_RemoveUnused.pressed:
 			_print_if_allowed("StringKeys Removed Keys: " + str(_removed_keys))
 	else:
 		print("Error: StringKeys locales don't match .csv file, failed")
@@ -221,15 +233,15 @@ func _write_keys_to_csv_file(path: String) -> bool: #true if no errors
 	return true #made it to the end without error
 
 func _text_from_key(key : String) -> String:
-	if $VBox/Grid/CheckBox_TextFromKey.pressed:
-		return key.split($VBox/Grid/LineEdit_Prefix.text, true, 1)[1] #get first part after prefix
+	if CheckBox_TextFromKey.pressed:
+		return key.split(LineEdit_Prefix.text, true, 1)[1] #get first part after prefix
 	else:
-		return $VBox/Grid/LineEdit_FillerStrings.text
+		return LineEdit_FillerStrings.text
 
 func _make_filler_strings(filled : int) -> Array: #fills in empty slots, as godot doesn't use keys that don't have a translation in all locales
 	var array = []
 	for i in range(0, _locales.size() - filled + 1):
-		array.append($VBox/Grid/LineEdit_FillerStrings.text)
+		array.append(LineEdit_FillerStrings.text)
 	return array
 
 #Modified files:
@@ -245,7 +257,7 @@ func _track_modified_files(): #tracks and compares sha256 of files, if modified 
 		if old_sha256 != new_sha256:
 			modified_files.append(f)
 			_file_hashes[f] = new_sha256
-	if $VBox/Grid/CheckBox_ModifiedOnly.pressed:
+	if CheckBox_ModifiedOnly.pressed:
 		_files_to_search = modified_files
 		_print_if_allowed("\nStringKeys (modified) files to search: " + str(_files_to_search))
 	else:
@@ -275,7 +287,7 @@ func _auto_on_save(_resource : Resource):
 	#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
 	#work because when it changes the csv file, making it run again
 	yield(plugin.get_editor_interface().get_resource_filesystem(), "filesystem_changed") 
-	if $VBox/Grid/CheckBox_AutoRunOnSave.pressed:
+	if CheckBox_AutoRunOnSave.pressed:
 		print("Running StringKeys on save")
 		_work()
 
@@ -283,17 +295,17 @@ func _auto_on_save(_resource : Resource):
 func _save_options(file_name : String):
 	#set options from buttons:
 	var save_data : Dictionary
-	save_data.translation_file = $VBox/Grid/LineEdit_TranslationFile.text
-	save_data.file_types_to_check = $VBox/Grid/TextEdit_FileTypes.text
-	save_data.paths_to_ignore = $VBox/Grid/TextEdit_PathsToIgnore.text
-	save_data.locales = $VBox/Grid/TextEdit_Locales.text
-	save_data.prefix = $VBox/Grid/LineEdit_Prefix.text
-	save_data.modified_only = $VBox/Grid/CheckBox_ModifiedOnly.pressed
-	save_data.filler_strings = $VBox/Grid/LineEdit_FillerStrings.text
-	save_data.text_from_key = $VBox/Grid/CheckBox_TextFromKey.pressed
-	save_data.clear_file = $VBox/Grid/CheckBox_ClearFile.pressed
-	save_data.remove_unused = $VBox/Grid/CheckBox_RemoveUnused.pressed
-	save_data.print_to_output = $VBox/Grid/CheckBox_PrintOutput.pressed
+	save_data.translation_file = LineEdit_TranslationFile.text
+	save_data.file_types_to_check = TextEdit_FileTypes.text
+	save_data.paths_to_ignore = TextEdit_PathsToIgnore.text
+	save_data.locales = TextEdit_Locales.text
+	save_data.prefix = LineEdit_Prefix.text
+	save_data.modified_only = CheckBox_ModifiedOnly.pressed
+	save_data.filler_strings = LineEdit_FillerStrings.text
+	save_data.text_from_key = CheckBox_TextFromKey.pressed
+	save_data.clear_file = CheckBox_ClearFile.pressed
+	save_data.remove_unused = CheckBox_RemoveUnused.pressed
+	save_data.print_to_output = CheckBox_PrintOutput.pressed
 	#save options:
 	Directory.new().make_dir_recursive("res://addons/string_keys/options/")
 	var file := File.new()
@@ -302,7 +314,7 @@ func _save_options(file_name : String):
 	file.close()
 	#Personal Options: (Auto on save: likely best if only one member generates the csv file for version control)
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
-	file.store_var($VBox/Grid/CheckBox_AutoRunOnSave.pressed)
+	file.store_var(CheckBox_AutoRunOnSave.pressed)
 	file.close()
 
 func _load_options(file_name : String):
@@ -313,31 +325,31 @@ func _load_options(file_name : String):
 		var save_data : Dictionary = parse_json(file.get_as_text())
 		file.close()
 		#set option buttons:
-		$VBox/Grid/LineEdit_TranslationFile.text = save_data.translation_file
-		$VBox/Grid/TextEdit_FileTypes.text = save_data.file_types_to_check
-		$VBox/Grid/TextEdit_PathsToIgnore.text = save_data.paths_to_ignore
-		$VBox/Grid/TextEdit_Locales.text = save_data.locales
-		$VBox/Grid/LineEdit_Prefix.text = save_data.prefix
-		$VBox/Grid/CheckBox_ModifiedOnly.pressed = save_data.modified_only
-		$VBox/Grid/LineEdit_FillerStrings.text = save_data.filler_strings
-		$VBox/Grid/CheckBox_TextFromKey.pressed = save_data.text_from_key
-		$VBox/Grid/CheckBox_ClearFile.pressed = save_data.clear_file
-		$VBox/Grid/CheckBox_RemoveUnused.pressed = save_data.remove_unused
-		$VBox/Grid/CheckBox_PrintOutput.pressed = save_data.print_to_output
+		LineEdit_TranslationFile.text = save_data.translation_file
+		TextEdit_FileTypes.text = save_data.file_types_to_check
+		TextEdit_PathsToIgnore.text = save_data.paths_to_ignore
+		TextEdit_Locales.text = save_data.locales
+		LineEdit_Prefix.text = save_data.prefix
+		CheckBox_ModifiedOnly.pressed = save_data.modified_only
+		LineEdit_FillerStrings.text = save_data.filler_strings
+		CheckBox_TextFromKey.pressed = save_data.text_from_key
+		CheckBox_ClearFile.pressed = save_data.clear_file
+		CheckBox_RemoveUnused.pressed = save_data.remove_unused
+		CheckBox_PrintOutput.pressed = save_data.print_to_output
 	#Personal Options: (Auto On Save)
 	if file.file_exists("user://string_keys_personal_options.skpo"):
 		file.open("user://string_keys_personal_options.skpo", File.READ)
-		$VBox/Grid/CheckBox_AutoRunOnSave.pressed = file.get_var()
+		CheckBox_AutoRunOnSave.pressed = file.get_var()
 		file.close()
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
 	$VBox/Grid/Label_ClearFile.visible = not button_pressed
 	$VBox/Grid/Label_RemoveUnused.visible = not button_pressed
-	$VBox/Grid/CheckBox_ClearFile.visible = not button_pressed
-	$VBox/Grid/CheckBox_RemoveUnused.visible = not button_pressed
-	$VBox/Grid/CheckBox_ClearFile.pressed = false
-	$VBox/Grid/CheckBox_RemoveUnused.pressed = false
+	CheckBox_ClearFile.visible = not button_pressed
+	CheckBox_RemoveUnused.visible = not button_pressed
+	CheckBox_ClearFile.pressed = false
+	CheckBox_RemoveUnused.pressed = false
 
 func _on_CheckBox_AutoRunOnSave_toggled(button_pressed):
 	$VBox/AutoOnSaveWarning.visible = button_pressed
@@ -350,7 +362,7 @@ func _on_CheckBox_RemoveUnused_toggled(button_pressed):
 
 #Other:
 func _print_if_allowed(thing):
-	if $VBox/Grid/CheckBox_PrintOutput.pressed:
+	if CheckBox_PrintOutput.pressed:
 		print(thing)
 
 func _append_array_to_array_unique(original: Array, addition: Array):
