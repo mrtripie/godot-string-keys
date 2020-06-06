@@ -2,7 +2,7 @@ tool
 extends Node
 
 #TODO:  (Add this to README)
-#Auto on save warning, modified only, clear, and remove
+#See if you can ensure there is no duplicate keys, even when not in alphabetical order (without complicating things)
 #make it create the file if it doesn't exist
 #Skip writing to csv file if there's no keys. unless remove unused/clear (still make it to the end to save file hashes, as long as there are no errors before)
 #Trigger .csv reimport  (maybe calling EditorFileSystem scan() dwould do the trick)
@@ -344,12 +344,6 @@ func _load_options(file_name : String):
 	file.close()
 
 #Options, warnings, disabling options:
-func _on_CheckBox_ClearFile_toggled(button_pressed):
-	$VBox/ClearFileWarning.visible = button_pressed
-
-func _on_CheckBox_RemoveUnused_toggled(button_pressed):
-	$VBox/RemoveUnusedWarning.visible = button_pressed
-
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
 	$VBox/Grid/Label_ClearFile.visible = not button_pressed
 	$VBox/Grid/Label_RemoveUnused.visible = not button_pressed
@@ -357,6 +351,15 @@ func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
 	$VBox/Grid/CheckBox_RemoveUnused.visible = not button_pressed
 	$VBox/Grid/CheckBox_ClearFile.pressed = false
 	$VBox/Grid/CheckBox_RemoveUnused.pressed = false
+
+func _on_CheckBox_AutoRunOnSave_toggled(button_pressed):
+	$VBox/AutoOnSaveWarning.visible = button_pressed
+
+func _on_CheckBox_ClearFile_toggled(button_pressed):
+	$VBox/ClearFileWarning.visible = button_pressed
+
+func _on_CheckBox_RemoveUnused_toggled(button_pressed):
+	$VBox/RemoveUnusedWarning.visible = button_pressed
 
 #Maybe warn to do full checks sometimes when using auto on save/modified only............................
 
@@ -369,3 +372,5 @@ func _append_array_to_array_unique(original: Array, addition: Array):
 	for a in addition:
 		if not original.has(a):
 			original.append(a)
+
+
