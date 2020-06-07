@@ -5,7 +5,7 @@ extends Node
 onready var LineEdit_TranslationFile = $VBox/Grid/LineEdit_TranslationFile
 onready var TextEdit_FileTypes = $VBox/Grid/TextEdit_FileTypes
 onready var TextEdit_PathsToIgnore = $VBox/Grid/TextEdit_PathsToIgnore
-onready var TextEdit_Locales = $VBox/Grid/Label_Locales
+onready var TextEdit_Locales = $VBox/Grid/TextEdit_Locales
 onready var LineEdit_Prefix = $VBox/Grid/LineEdit_Prefix
 onready var CheckBox_ModifiedOnly = $VBox/Grid/CheckBox_ModifiedOnly
 onready var CheckBox_AutoRunOnSave = $VBox/Grid/CheckBox_AutoRunOnSave
