@@ -17,7 +17,8 @@ Example translations.csv file:
 | Godot Text Resource | .tres |
 | Gd Script | .gd |
 | C# Script | .cs |
-  (And most other text based script formats)
+
+(And most other text based script formats)
 
 - These Godot specific binary formats (only these):
 
@@ -26,6 +27,7 @@ Example translations.csv file:
 | Godot Binary Scene | .scn |
 | Godot Binary Resource | .res |
 | Godot Visual Script | .vs |
+
 The binary formats take a little longer to search since StringKeys first converts them to a temporary text based file
 
 ## Tutorial:
