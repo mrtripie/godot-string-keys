@@ -245,9 +245,9 @@ __meta__ = {
 margin_top = 657.0
 margin_right = 111.0
 margin_bottom = 671.0
-hint_tooltip = "What StringKeys fills in empty translation slots (Godot requires a translation for all locales to translate keys)"
+hint_tooltip = "What StringKeys fills in empty translation slots (Godot requires something in each translation slot, even if it's an empty string), could be blank or an underscore _"
 mouse_filter = 1
-text = "Filler Strings*"
+text = "Filler Strings"
 
 [node name="LineEdit_FillerStrings" type="LineEdit" parent="VBox/Grid"]
 margin_left = 115.0
@@ -255,8 +255,7 @@ margin_top = 652.0
 margin_right = 320.0
 margin_bottom = 676.0
 size_flags_horizontal = 3
-text = "_"
-placeholder_text = "Ex: $$, ##, or TR_"
+placeholder_text = "(can be left blank)"
 caret_blink = true
 caret_blink_speed = 0.5
 
