@@ -10,7 +10,7 @@ INSTRUCTIONS:
 5: There should now be a StringKeys dock in the top right. Under it set the name and path of the Translation File you want it to generate (such as res://localization/translations.csv)
 
 6: Add strings that you want to translate in your project, Dialogue and/or UI. The string should be in the format: {optional catagory or note}{prefix}{text}, the prefix is a part of the string that tells StringKeys that this string should be used as a translation key, it should be something that you don't expect will be part of any other keys, the default setting is "$$". An example key would be on a button in your UI with the text: "$$New Game" which will be added as a key and assuming Text From Key is turned on, will generate the translation for your native locale of "New Game". You can also add an optional catagory/note before the prefix which will be ignored by Text From Key, but will group together all keys with that category (keys are put in alphabetical order). For example "UI$$New Game" will also generate the translation "New Game" but it will be grouped with all other keys starting with "UI" and let the translater know the context of string.
-Note: StringKeys can only search files that are in a text based format for keys (such as .tscn, .tres, .gd, and .cs) binary files are not supported (such as .scn, .res and .vs)
+Note: StringKeys supports any text based format that saves strings between "quotation marks", such as text programming files like .gd and .cs, as well as godot specific text files like .tscn and .tres. It also supports certain Godot binary files (.scn, .res and .vs (visual script)) by creating a temporary text based copy of them (making them a little slower to get keys from)
 
 7: Go to StringKeys dock and click Create Translation File button. NOTE: Its recommended that only one team member generates the translation file as to avoid merge conflicts in version control such as git (and when it trys to automatically solve the conflict, I'm not sure if it will do it correctly"
 
@@ -44,4 +44,3 @@ POSSIBLE TODOS: (Low priorty right now)
 See if you can make it ensure there are no duplicate keys, even when not in alphabetical order (without complicating things)
 Presets so you can have multiple files scanning different key types (wont work with modified files w/o a redesign though)
 See if you can find a way to deal with modified files when different settings come in to play (such as presets)
-Figure out how it can check binary files such as .vs visual scripts or binary .scn and .res

@@ -119,11 +119,18 @@ func _is_path_allowed(path : String) -> bool:
 #Finding string keys in files:
 func _search_files_for_keys():
 	for f in _files_to_search:
-		_append_array_to_array_unique(_keys, _find_keys_in_file(f))
+		if f.ends_with(".scn"): #binary scene
+			_append_array_to_array_unique(_keys, _find_keys_in_binary_scn(f))
+		elif f.ends_with(".res"): #binary resource
+			_append_array_to_array_unique(_keys, _find_keys_in_binary_res(f))
+		elif f.ends_with(".vs"): #visual script (currently always binary)
+			_append_array_to_array_unique(_keys, _find_keys_in_binary_visual_script(f))
+		else: #consider (hope) its a text file
+			_append_array_to_array_unique(_keys, _find_keys_in_text_file(f))
 	_keys.sort() #make alphabetical
 	_print_if_allowed("\nStringKeys keys found: " + str(_keys))
 
-func _find_keys_in_file(file_path : String) -> Array:
+func _find_keys_in_text_file(file_path : String) -> Array:
 	var file = File.new()
 	file.open(file_path, File.READ)
 	var file_text : String = file.get_as_text()
@@ -150,6 +157,30 @@ func _find_keys_in_file(file_path : String) -> Array:
 				else:
 					can_leave_string = true #can always leave if last wasn't a \
 	return found_keys
+
+func _find_keys_in_binary_scn(file_path : String) -> Array:
+	ResourceSaver.save("user://sk_temp.tscn", load(file_path)) #converts .scn to .tscn and saves as temp file
+	var keys := _find_keys_in_text_file("user://sk_temp.tscn")
+	Directory.new().remove("user://sk_temp.tscn")
+	return keys
+
+func _find_keys_in_binary_res(file_path : String) -> Array:
+	ResourceSaver.save("user://sk_temp.tres", load(file_path)) #converts .res to .tres and saves as temp file
+	var keys := _find_keys_in_text_file("user://sk_temp.tres")
+	Directory.new().remove("user://sk_temp.tres")
+	return keys
+
+func _find_keys_in_binary_visual_script(file_path : String) -> Array:
+	var scene := PackedScene.new() #create a scene and node to pack the script to
+	var node := Node.new()
+	node.set_script(load(file_path))
+	node.get_script().resource_local_to_scene = true #pack the script in the scene
+	node.get_script().resource_path = ""
+	scene.pack(node)
+	ResourceSaver.save("user://sk_temp.tscn", scene) #save to temporary .tscn, find keys, and remove file
+	var keys := _find_keys_in_text_file("user://sk_temp.tscn")
+	Directory.new().remove("user://sk_temp.tscn")
+	return keys
 
 func _is_string_a_key(string : String) -> bool:
 	return string.find(LineEdit_Prefix.text) != -1

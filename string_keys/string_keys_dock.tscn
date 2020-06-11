@@ -71,7 +71,19 @@ margin_top = 106.0
 margin_right = 111.0
 margin_bottom = 137.0
 hint_tooltip = "List of file types to check, seperated by commas.
-Files must be in text format"
+
+Supported types include any text file that saves strings between \"qoutation marks\" such as:
+    Text Scene:              .tscn
+    Text Resource:       .tres
+    GD Script:                 .gd
+    C# Script:                 .cs
+    And other text based programming files.
+	
+Also supports certain Godot specific binary files:
+    Binary Scene:         .scn
+    Binary Resource:  .res
+    Visual Script:           .vs
+    Note: Binary files are a little slower to find keys from since String Keys converts them to a temporary text file first"
 mouse_filter = 1
 text = "File Types
 to Check*"
@@ -82,7 +94,8 @@ margin_top = 82.0
 margin_right = 320.0
 margin_bottom = 162.0
 rect_min_size = Vector2( 0, 80 )
-text = "tscn, tres, gd, cs,"
+text = "tscn, tres, gd, cs,
+scn, res, vs,"
 wrap_enabled = true
 caret_blink = true
 
