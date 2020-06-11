@@ -7,7 +7,7 @@ Example translations.csv file:
 |--|--|--|
 | $$Hello | Hello  | Hola |
 
-## Supported Formats:
+## SUPPORTED FORMATS:
 
  - StringKeys can search any text based format that saves strings between "quotation marks" for strings such as:
 
@@ -17,7 +17,8 @@ Example translations.csv file:
 | Godot Text Resource | .tres |
 | Gd Script | .gd |
 | C# Script | .cs |
-  (And most other text based script formats)
+
+(And most other text based script formats)
 
 - These Godot specific binary formats (only these):
 
@@ -26,9 +27,10 @@ Example translations.csv file:
 | Godot Binary Scene | .scn |
 | Godot Binary Resource | .res |
 | Godot Visual Script | .vs |
+
 The binary formats take a little longer to search since StringKeys first converts them to a temporary text based file
 
-## Tutorial:
+## TUTORIAL:
 #### Basic Setup:
 1. Download newest release for your engine version (if you're using Godot 3.2, choose the newest version of 3.2.X)
 
