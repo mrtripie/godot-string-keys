@@ -11,7 +11,6 @@ onready var CheckBox_ModifiedOnly = $VBox/Grid/CheckBox_ModifiedOnly
 onready var CheckBox_AutoRunOnSave = $VBox/Grid/CheckBox_AutoRunOnSave
 onready var LineEdit_FillerStrings = $VBox/Grid/LineEdit_FillerStrings
 onready var CheckBox_TextFromKey = $VBox/Grid/CheckBox_TextFromKey
-onready var CheckBox_ClearFile = $VBox/Grid/CheckBox_ClearFile
 onready var CheckBox_RemoveUnused = $VBox/Grid/CheckBox_RemoveUnused
 onready var CheckBox_PrintOutput = $VBox/Grid/CheckBox_PrintOutput
 
@@ -46,7 +45,7 @@ func _work():
 	_track_modified_files()
 	_search_files_for_keys()
 	#only continue if it actually has something to add, or remove
-	if _keys.size() > 0 or CheckBox_ClearFile.pressed or CheckBox_RemoveUnused.pressed:
+	if _keys.size() > 0 or CheckBox_RemoveUnused.pressed:
 		if _get_or_make_csv_file(LineEdit_TranslationFile.text): #true = no errors, continue
 			if _write_keys_to_csv_file(LineEdit_TranslationFile.text):
 				_save_file_hashes() #Only run this if there were no errors, otherwise file will be incorrect
@@ -189,7 +188,7 @@ func _is_string_a_key(string : String) -> bool:
 func _get_or_make_csv_file(path: String) -> bool: #true if no errors
 	if path.get_file() != "": #Tries to make sure path is valid  TODO: needs improvement
 		var csv_file = File.new()
-		if csv_file.file_exists(path) and not CheckBox_ClearFile.pressed:
+		if csv_file.file_exists(path):
 			csv_file.open(path, File.READ)
 			_locales = csv_file.get_csv_line() as Array #first line for locales
 			_locales.pop_front() #gets rid of the "key" in the first column
@@ -334,7 +333,6 @@ func _save_options(file_name : String):
 	save_data.modified_only = CheckBox_ModifiedOnly.pressed
 	save_data.filler_strings = LineEdit_FillerStrings.text
 	save_data.text_from_key = CheckBox_TextFromKey.pressed
-	save_data.clear_file = CheckBox_ClearFile.pressed
 	save_data.remove_unused = CheckBox_RemoveUnused.pressed
 	save_data.print_to_output = CheckBox_PrintOutput.pressed
 	#save options:
@@ -364,7 +362,6 @@ func _load_options(file_name : String):
 		CheckBox_ModifiedOnly.pressed = save_data.modified_only
 		LineEdit_FillerStrings.text = save_data.filler_strings
 		CheckBox_TextFromKey.pressed = save_data.text_from_key
-		CheckBox_ClearFile.pressed = save_data.clear_file
 		CheckBox_RemoveUnused.pressed = save_data.remove_unused
 		CheckBox_PrintOutput.pressed = save_data.print_to_output
 	#Personal Options: (Auto On Save)
@@ -375,21 +372,16 @@ func _load_options(file_name : String):
 
 #Options, warnings, disabling options:
 func _on_CheckBox_ModifiedOnly_toggled(button_pressed):
-	$VBox/Grid/Label_ClearFile.visible = not button_pressed
-	$VBox/Grid/Label_RemoveUnused.visible = not button_pressed
-	CheckBox_ClearFile.visible = not button_pressed
-	CheckBox_RemoveUnused.visible = not button_pressed
-	CheckBox_ClearFile.pressed = false
-	CheckBox_RemoveUnused.pressed = false
+	if button_pressed:
+		CheckBox_RemoveUnused.pressed = false #Modified Only and Remove Unused are incompatible
 
 func _on_CheckBox_AutoRunOnSave_toggled(button_pressed):
 	$VBox/AutoOnSaveWarning.visible = button_pressed
 
-func _on_CheckBox_ClearFile_toggled(button_pressed):
-	$VBox/ClearFileWarning.visible = button_pressed
-
 func _on_CheckBox_RemoveUnused_toggled(button_pressed):
 	$VBox/RemoveUnusedWarning.visible = button_pressed
+	if button_pressed:
+		CheckBox_ModifiedOnly.pressed = false #Modified Only and Remove Unused are incompatible
 
 #Other:
 func _print_if_allowed(thing):

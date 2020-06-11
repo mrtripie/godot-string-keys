@@ -14,7 +14,7 @@ __meta__ = {
 
 [node name="VBox" type="VBoxContainer" parent="."]
 margin_right = 320.0
-margin_bottom = 866.0
+margin_bottom = 838.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -22,7 +22,7 @@ __meta__ = {
 
 [node name="Grid" type="GridContainer" parent="VBox"]
 margin_right = 320.0
-margin_bottom = 842.0
+margin_bottom = 814.0
 columns = 2
 
 [node name="Label_TranslationFile" type="Label" parent="VBox/Grid"]
@@ -83,7 +83,7 @@ Also supports certain Godot specific binary files:
     Binary Scene:         .scn
     Binary Resource:  .res
     Visual Script:           .vs
-    Note: Binary files are a little slower to find keys from since String Keys converts them to a temporary text file first"
+    Note: Binary files are a little slower to find keys from since StringKeys converts them to a temporary text file first"
 mouse_filter = 1
 text = "File Types
 to Check*"
@@ -178,15 +178,12 @@ margin_top = 547.0
 margin_right = 111.0
 margin_bottom = 561.0
 hint_tooltip = "Only check files that have been modified since the last time \"Create Translation File\" was pressed
-
 Provides massive performance improvement for large projects, highly recommend.
 
-Remove Unused and Clear File are disabled with this on as they would erase all keys from unmodified files
+Remove Unused is disabled with this on as it would erase all keys from unmodified files
 
 May need to disable to do a full run if a key isn't getting added (the file keeping track of what files have been changed may be out of sync)
-
-May be a good idea to disable and use Remove Unused (or Clear File if you've done no manual work)
-every once in a while to clean up keys that have been removed from the game"
+May be a good idea to disable and use Remove Unused every once in a while to clean up keys that have been removed from the game"
 mouse_filter = 1
 text = "Modified Only"
 
@@ -282,18 +279,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label_ClearFile" type="Label" parent="VBox/Grid"]
+[node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
 margin_top = 713.0
 margin_right = 111.0
 margin_bottom = 727.0
-hint_tooltip = "If set, it will clear the file and generate it from scratch.
-This is good when you haven't manually made any changes and are checking the whole project.
-Faster performance as it doesn't need to work with an old csv file. 
-Backup recommended"
-mouse_filter = 1
-text = "Clear File"
+hint_tooltip = "Any keys in the csv file that aren't found by StringKeys in your game will be removed.
+Be careful as there could be ones that are used, but StringKeys  wasn't set up to find anymore
 
-[node name="CheckBox_ClearFile" type="CheckBox" parent="VBox/Grid"]
+Modified Only is disabled with this as it would get rid of all keys from unmodified files"
+mouse_filter = 1
+text = "Remove Unused"
+
+[node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
 margin_top = 708.0
 margin_right = 320.0
@@ -303,29 +300,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label_RemoveUnused" type="Label" parent="VBox/Grid"]
-margin_top = 741.0
-margin_right = 111.0
-margin_bottom = 755.0
-hint_tooltip = "Any keys in the csv file that aren't found by StringKeys in your game will be removed.
-Be careful as there could be ones that are used, but StringKeys  wasn't set up to find anymore"
-mouse_filter = 1
-text = "Remove Unused"
-
-[node name="CheckBox_RemoveUnused" type="CheckBox" parent="VBox/Grid"]
-margin_left = 296.0
-margin_top = 736.0
-margin_right = 320.0
-margin_bottom = 760.0
-size_flags_horizontal = 8
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Label_Debug" type="Label" parent="VBox/Grid"]
-margin_top = 800.0
+margin_top = 772.0
 margin_right = 111.0
-margin_bottom = 814.0
+margin_bottom = 786.0
 hint_tooltip = "File name in CSV format.
 If it exists it'll be modified, if it doesn't it'll be created."
 mouse_filter = 1
@@ -335,36 +313,37 @@ text = "Debug:"
 
 [node name="Control3" type="Control" parent="VBox/Grid"]
 margin_left = 115.0
-margin_top = 764.0
+margin_top = 736.0
 margin_right = 320.0
-margin_bottom = 814.0
+margin_bottom = 786.0
 rect_min_size = Vector2( 0, 50 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label_PrintOutput" type="Label" parent="VBox/Grid"]
-margin_top = 823.0
+margin_top = 795.0
 margin_right = 111.0
-margin_bottom = 837.0
+margin_bottom = 809.0
 hint_tooltip = "Should StringKeys print to the output tab things like what files it searched and what keys it found? It will print errors either way."
 mouse_filter = 1
 text = "Print to Output"
 
 [node name="CheckBox_PrintOutput" type="CheckBox" parent="VBox/Grid"]
 margin_left = 296.0
-margin_top = 818.0
+margin_top = 790.0
 margin_right = 320.0
-margin_bottom = 842.0
+margin_bottom = 814.0
 size_flags_horizontal = 8
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Button" type="Button" parent="VBox"]
-margin_top = 846.0
+margin_top = 818.0
 margin_right = 320.0
-margin_bottom = 866.0
+margin_bottom = 838.0
+hint_tooltip = "Generate the .csv file"
 text = "Create Translation File"
 
 [node name="AutoOnSaveWarning" type="Label" parent="VBox"]
@@ -376,25 +355,15 @@ custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
 text = "WARNING: Auto on save slows down the saving time of scenes, scripts, and resources"
 autowrap = true
 
-[node name="ClearFileWarning" type="Label" parent="VBox"]
-visible = false
-margin_top = 905.0
-margin_right = 308.0
-margin_bottom = 953.0
-custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
-text = "WARNING: Clear File will erase all previously made translations and generate a new file. Backup recommended"
-autowrap = true
-
 [node name="RemoveUnusedWarning" type="Label" parent="VBox"]
 visible = false
 margin_top = 957.0
 margin_right = 308.0
 margin_bottom = 1022.0
 custom_colors/font_color = Color( 1, 0.945098, 0, 1 )
-text = "WARNING: Remove Unused removes all keys that StringTool didn't find, including ones that may actually be used in a file type it wasn't set to check. Backup recommended"
+text = "WARNING: Remove Unused removes all keys that StringKeys didn't find, including ones that may actually be used in a file type it wasn't set to check. Backup recommended"
 autowrap = true
 [connection signal="toggled" from="VBox/Grid/CheckBox_ModifiedOnly" to="." method="_on_CheckBox_ModifiedOnly_toggled"]
 [connection signal="toggled" from="VBox/Grid/CheckBox_AutoRunOnSave" to="." method="_on_CheckBox_AutoRunOnSave_toggled"]
-[connection signal="toggled" from="VBox/Grid/CheckBox_ClearFile" to="." method="_on_CheckBox_ClearFile_toggled"]
 [connection signal="toggled" from="VBox/Grid/CheckBox_RemoveUnused" to="." method="_on_CheckBox_RemoveUnused_toggled"]
 [connection signal="pressed" from="VBox/Button" to="." method="_on_Button_pressed"]
