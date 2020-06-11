@@ -36,7 +36,7 @@ The binary formats take a little longer to search since StringKeys first convert
 
 2. If your project doesn't have an **addons folder (res://addons/)**, create one
 
-3. **Copy the string_keys folder and paste it under your project's addons folder**
+3. **Copy the string_keys folder (under addons) and paste it under your project's addons folder**
 
 4. In the top left of Godot go to **Project > Project Settings > Plugins tab**  find the **StringKeys addon**, and set the **Status to Active**
 
