@@ -119,9 +119,9 @@ func _is_path_allowed(path : String) -> bool:
 func _search_files_for_keys():
 	for f in _files_to_search:
 		if f.ends_with(".scn"): #binary scene
-			_append_array_to_array_unique(_keys, _find_keys_in_binary_scn(f))
+			_append_array_to_array_unique(_keys, _find_keys_in_binary_scn_or_res(f, "user://sk_temp.tscn"))
 		elif f.ends_with(".res"): #binary resource
-			_append_array_to_array_unique(_keys, _find_keys_in_binary_res(f))
+			_append_array_to_array_unique(_keys, _find_keys_in_binary_scn_or_res(f, "user://sk_temp.tres"))
 		elif f.ends_with(".vs"): #visual script (currently always binary)
 			_append_array_to_array_unique(_keys, _find_keys_in_binary_visual_script(f))
 		else: #consider (hope) its a text file
@@ -157,16 +157,10 @@ func _find_keys_in_text_file(file_path : String) -> Array:
 					can_leave_string = true #can always leave if last wasn't a \
 	return found_keys
 
-func _find_keys_in_binary_scn(file_path : String) -> Array:
-	ResourceSaver.save("user://sk_temp.tscn", load(file_path)) #converts .scn to .tscn and saves as temp file
-	var keys := _find_keys_in_text_file("user://sk_temp.tscn")
-	Directory.new().remove("user://sk_temp.tscn")
-	return keys
-
-func _find_keys_in_binary_res(file_path : String) -> Array:
-	ResourceSaver.save("user://sk_temp.tres", load(file_path)) #converts .res to .tres and saves as temp file
-	var keys := _find_keys_in_text_file("user://sk_temp.tres")
-	Directory.new().remove("user://sk_temp.tres")
+func _find_keys_in_binary_scn_or_res(file_path : String, temp_path : String) -> Array:
+	ResourceSaver.save(temp_path, load(file_path)) #converts binary version to text version and saves as temp file
+	var keys := _find_keys_in_text_file(temp_path)
+	Directory.new().remove(temp_path)
 	return keys
 
 func _find_keys_in_binary_visual_script(file_path : String) -> Array:
