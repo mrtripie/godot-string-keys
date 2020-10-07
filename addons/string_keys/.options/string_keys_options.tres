@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://addons/string_keys/string_keys_options.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+translation_file = "res://localization/translations.csv"
+patterns_to_search = [ "tr(\"STR_KEY\")", "Tr(\"STR_KEY\")", "text = \"STR_KEY\"", "title = \"STR_KEY\"", "hint_tooltip = \"STR_KEY\"" ]
+file_types_to_search = [ ".gd", ".cs", ".vs", ".tscn", ".tres", ".scn", ".res" ]
+paths_to_ignore = [ ".import", "addons", ".git" ]
+locales = [ "en" ]
+context_info_seperator = "::"
+text_from_key = true
+remove_unused = true
+modified_files_only = false
+print_debug_output = true

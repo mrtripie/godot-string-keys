@@ -33,12 +33,19 @@ func _exit_tree():
 func on_menu_item_pressed(i: int):
 	if i == MENU_GENERATE:
 		generate_translation_file()
+	
 	elif i == MENU_AUTO_GEN_ON_SAVE:
 		popup_menu.toggle_item_checked(MENU_AUTO_GEN_ON_SAVE)
+	
 	elif i == MENU_OPTIONS:
-		get_editor_interface().inspect_object(get_options())
+		var options:= get_options()
+		# options having a ref to the inspector allows it to interactively correct mistakes
+		options.editor_inspector = get_editor_interface().get_inspector()
+		get_editor_interface().inspect_object(options)
+	
 	elif i == MENU_GITHUB:
 		OS.shell_open("https://github.com/mrtripie/godot-string-keys")
+	
 	elif i == MENU_TUTORIAL:
 		#OS.shell_open("https://youtube.com .... ")
 		pass
@@ -60,13 +67,13 @@ func generate_translation_file():
 
 
 func get_options() -> StringKeysOptions:
-	if not File.new().file_exists("addons/string_keys/options/string_keys_options.tres"): 
+	if not File.new().file_exists("addons/string_keys/.options/string_keys_options.tres"): 
 		var dir:= Directory.new()
-		if not dir.dir_exists("addons/string_keys/options"):
-			dir.make_dir("addons/string_keys/options")
-		ResourceSaver.save("addons/string_keys/options/string_keys_options.tres", StringKeysOptions.new())
+		if not dir.dir_exists("addons/string_keys/.options"):
+			dir.make_dir("addons/string_keys/.options")
+		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", StringKeysOptions.new())
 		get_editor_interface().get_resource_filesystem().scan()
-	return load("addons/string_keys/options/string_keys_options.tres") as StringKeysOptions
+	return load("addons/string_keys/.options/string_keys_options.tres") as StringKeysOptions
 
 
 # certain options may be best to have saved personally, outside the project res folder

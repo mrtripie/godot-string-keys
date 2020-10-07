@@ -1,3 +1,4 @@
+tool
 class_name StringKeysOptions
 extends Resource
 
@@ -26,7 +27,25 @@ export(Array, String) var paths_to_ignore:= ([
 export(Array, String) var locales:= ["en"]
 export var context_info_seperator:= "::"
 export var text_from_key:= true
-export var remove_unused:= true
-export var modified_files_only:= true
-export var auto_on_save:= false
+export var remove_unused:= true setget set_remove_unused
+export var modified_files_only:= false setget set_modified_files_only
 export var print_debug_output:= false
+
+var editor_inspector: EditorInspector
+
+# remove_unused and modified_files_only are incompatible, so they need to turn off the other:
+func set_remove_unused(value: bool):
+	remove_unused = value
+	if value:
+		modified_files_only = false
+		if editor_inspector:
+			editor_inspector.refresh()
+
+
+func set_modified_files_only(value: bool):
+	modified_files_only = value
+	if value:
+		remove_unused = false
+		if editor_inspector:
+			editor_inspector.refresh()
+
