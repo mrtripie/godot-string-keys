@@ -18,11 +18,12 @@ export(Array, String) var file_types_to_search:= ([
 	".tres",
 	".scn",
 	".res",
-	])
+	]) setget set_file_types_to_search
 export(Array, String) var paths_to_ignore:= ([
 	".import",
 	"addons",
 	".git",
+	"localization",
 	])
 export(Array, String) var locales:= ["en"]
 export var context_info_seperator:= "::"
@@ -31,7 +32,21 @@ export var remove_unused:= true setget set_remove_unused
 export var modified_files_only:= false setget set_modified_files_only
 export var print_debug_output:= false
 
-var editor_inspector: EditorInspector
+var editor_inspector: EditorInspector # allows interactively correcting invalid options
+
+func set_file_types_to_search(value: Array):
+	print ("ft")
+	var file_types:= []
+	for ft in value:
+		if ft.begins_with("."):
+			file_types.append(ft)
+		else:
+			file_types.append("." + ft)
+			print("false")
+	file_types_to_search = file_types
+	if editor_inspector:
+		editor_inspector.refresh()
+
 
 # remove_unused and modified_files_only are incompatible, so they need to turn off the other:
 func set_remove_unused(value: bool):
@@ -46,6 +61,8 @@ func set_modified_files_only(value: bool):
 	modified_files_only = value
 	if value:
 		remove_unused = false
+
 		if editor_inspector:
 			editor_inspector.refresh()
+
 

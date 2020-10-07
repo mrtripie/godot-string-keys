@@ -1,25 +1,27 @@
 tool
 extends EditorPlugin
 
-var menu_button: MenuButton
-var popup_menu: PopupMenu
 # Make sure these are created in the same order for the index to be correct:
 enum {MENU_GENERATE, MENU_AUTO_GEN_ON_SAVE, MENU_OPTIONS, MENU_GITHUB, MENU_TUTORIAL}
 
+var _menu_button: MenuButton
+var _popup_menu: PopupMenu
+var _options: StringKeysOptions
+
 func _enter_tree():
-	menu_button = MenuButton.new()
-	menu_button.text = "StringKeys"
+	_menu_button = MenuButton.new()
+	_menu_button.text = "StringKeys"
 	
-	popup_menu = menu_button.get_popup()
-	popup_menu.add_item("Generate Translation File")
-	popup_menu.add_check_item("Auto On Save")
-	popup_menu.add_item("Options")
-	popup_menu.add_item("GitHub + Documentation")
-	popup_menu.add_item("Tutorial Video")
+	_popup_menu = _menu_button.get_popup()
+	_popup_menu.add_item("Generate Translation File")
+	_popup_menu.add_check_item("Auto On Save")
+	_popup_menu.add_item("Options")
+	_popup_menu.add_item("GitHub + Documentation")
+	_popup_menu.add_item("Tutorial Video")
 	
-	popup_menu.connect("index_pressed", self, "on_menu_item_pressed")
-	add_control_to_container(CONTAINER_TOOLBAR, menu_button)
-	menu_button.get_parent().move_child(menu_button, 1)
+	_popup_menu.connect("index_pressed", self, "on_menu_item_pressed")
+	add_control_to_container(CONTAINER_TOOLBAR, _menu_button)
+	_menu_button.get_parent().move_child(_menu_button, 1)
 	
 	_load_personal_options()
 	connect("resource_saved", self, "auto_gen_on_save")
@@ -27,7 +29,9 @@ func _enter_tree():
 
 func _exit_tree():
 	_save_personal_options()
-	remove_control_from_container(CONTAINER_TOOLBAR, menu_button)
+	remove_control_from_container(CONTAINER_TOOLBAR, _menu_button)
+	if _options:
+		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", _options)
 
 
 func on_menu_item_pressed(i: int):
@@ -35,7 +39,7 @@ func on_menu_item_pressed(i: int):
 		generate_translation_file()
 	
 	elif i == MENU_AUTO_GEN_ON_SAVE:
-		popup_menu.toggle_item_checked(MENU_AUTO_GEN_ON_SAVE)
+		_popup_menu.toggle_item_checked(MENU_AUTO_GEN_ON_SAVE)
 	
 	elif i == MENU_OPTIONS:
 		var options:= get_options()
@@ -53,7 +57,7 @@ func on_menu_item_pressed(i: int):
 
 func auto_gen_on_save(_resource : Resource):
 	print("resource saved")
-	if popup_menu.is_item_checked(MENU_AUTO_GEN_ON_SAVE):
+	if _popup_menu.is_item_checked(MENU_AUTO_GEN_ON_SAVE):
 		#resource_saved signal is BEFORE the save, waiting until the filesytem has channged
 		#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
 		#work because when it changes the csv file, making it run again
@@ -63,17 +67,22 @@ func auto_gen_on_save(_resource : Resource):
 
 
 func generate_translation_file():
+	if _options:
+		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", _options)
 	StringKeys.new().generate_translation_file(get_options())
 
 
 func get_options() -> StringKeysOptions:
+	if _options:
+		return _options
 	if not File.new().file_exists("addons/string_keys/.options/string_keys_options.tres"): 
 		var dir:= Directory.new()
 		if not dir.dir_exists("addons/string_keys/.options"):
 			dir.make_dir("addons/string_keys/.options")
 		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", StringKeysOptions.new())
 		get_editor_interface().get_resource_filesystem().scan()
-	return load("addons/string_keys/.options/string_keys_options.tres") as StringKeysOptions
+	_options = load("addons/string_keys/.options/string_keys_options.tres")
+	return _options
 
 
 # certain options may be best to have saved personally, outside the project res folder
@@ -82,7 +91,7 @@ func get_options() -> StringKeysOptions:
 func _save_personal_options():
 	var file = File.new()
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
-	file.store_var(popup_menu.is_item_checked(MENU_AUTO_GEN_ON_SAVE))
+	file.store_var(_popup_menu.is_item_checked(MENU_AUTO_GEN_ON_SAVE))
 	file.close()
 
 
@@ -90,5 +99,5 @@ func _load_personal_options():
 	var file = File.new()
 	if file.file_exists("user://string_keys_personal_options.skpo"):
 		file.open("user://string_keys_personal_options.skpo", File.READ)
-		popup_menu.set_item_checked(MENU_AUTO_GEN_ON_SAVE, file.get_var())
+		_popup_menu.set_item_checked(MENU_AUTO_GEN_ON_SAVE, file.get_var())
 		file.close()
