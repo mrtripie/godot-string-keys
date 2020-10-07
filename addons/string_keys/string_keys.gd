@@ -1,13 +1,7 @@
-tool
-extends EditorPlugin
+class_name StringKeys
+extends Reference
 
-var dock
+var options: StringKeysOptions
 
-func _enter_tree():
-	dock = preload("res://addons/string_keys/string_keys_dock.tscn").instance()
-	dock.plugin = self
-	add_control_to_dock(DOCK_SLOT_RIGHT_UR, dock)
-
-func _exit_tree():
-	remove_control_from_docks(dock)
-	dock.free()
+func generate_translation_file(sk_options: StringKeysOptions):
+	options = sk_options
