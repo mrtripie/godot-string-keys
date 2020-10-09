@@ -19,11 +19,11 @@ export(Array, String) var file_types_to_search:= ([
 	".scn",
 	".res",
 	]) setget set_file_types_to_search
-export(Array, String) var paths_to_ignore:= ([
-	".import",
-	"addons",
-	".git",
-	"localization",
+export(Array, String) var directories_to_ignore:= ([
+	"res://.git/",
+	"res://.import/",
+	"res://addons/",
+	"res://localization/",
 	])
 export(Array, String) var locales:= ["en"]
 export var context_info_seperator:= "::"
