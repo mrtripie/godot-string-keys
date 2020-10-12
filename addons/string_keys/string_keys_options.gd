@@ -26,8 +26,7 @@ export(Array, String) var directories_to_ignore:= ([
 	"res://localization/",
 	])
 export(Array, String) var locales:= ["en"]
-export var context_info_seperator:= "::"
-export var text_from_key:= true
+export var tag_seperator:= "::"
 export var remove_unused:= true setget set_remove_unused
 export var modified_files_only:= false setget set_modified_files_only
 export var print_debug_output:= false
@@ -61,8 +60,6 @@ func set_modified_files_only(value: bool):
 	modified_files_only = value
 	if value:
 		remove_unused = false
-
 		if editor_inspector:
 			editor_inspector.refresh()
-
 

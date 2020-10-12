@@ -4,13 +4,12 @@
 
 [resource]
 script = ExtResource( 1 )
-translation_file = "res://localization/translations.csv"
+translation_file = "res://testing/localization/translations.csv"
 patterns_to_search = [ "tr(\"STR_KEY\")", "Tr(\"STR_KEY\")", "text = \"STR_KEY\"", "title = \"STR_KEY\"", "hint_tooltip = \"STR_KEY\"" ]
-file_types_to_search = [ ".gd", ".cs", ".vs", ".tscn", ".tres", ".scn", ".res", "." ]
-directories_to_ignore = [ "res://.git/", "res://.import/", "res://addons/", "res://localization/", "res://Testing/Levels/StringKeysTestLevels/" ]
+file_types_to_search = [ ".gd", ".cs", ".vs", ".tscn", ".tres", ".scn", ".res" ]
+directories_to_ignore = [ "res://.git/", "res://.import/", "res://addons/", "res://localization/" ]
 locales = [ "en" ]
-context_info_seperator = "::"
-text_from_key = true
+tag_seperator = "::"
 remove_unused = true
 modified_files_only = false
 print_debug_output = true

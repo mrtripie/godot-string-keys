@@ -3,6 +3,8 @@ extends EditorPlugin
 
 # Make sure these are created in the same order for the index to be correct:
 enum {MENU_GENERATE, MENU_AUTO_GEN_ON_SAVE, MENU_OPTIONS, MENU_GITHUB, MENU_TUTORIAL}
+const OPTIONS_DIRECTORY = "res://addons/string_keys/.options"
+const OPTIONS_FILE_PATH = OPTIONS_DIRECTORY + "/string_keys_options.tres"
 
 var _menu_button: MenuButton
 var _popup_menu: PopupMenu
@@ -31,7 +33,7 @@ func _exit_tree():
 	_save_personal_options()
 	remove_control_from_container(CONTAINER_TOOLBAR, _menu_button)
 	if _options:
-		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", _options)
+		ResourceSaver.save(OPTIONS_FILE_PATH, _options)
 
 
 func on_menu_item_pressed(i: int):
@@ -68,20 +70,20 @@ func auto_gen_on_save(_resource : Resource):
 
 func generate_translation_file():
 	if _options:
-		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", _options)
+		ResourceSaver.save(OPTIONS_FILE_PATH, _options)
 	StringKeys.new().generate_translation_file(get_options())
+	get_editor_interface().get_resource_filesystem().scan() #Triggers reimport of csv file
 
 
 func get_options() -> StringKeysOptions:
 	if _options:
 		return _options
-	if not File.new().file_exists("addons/string_keys/.options/string_keys_options.tres"): 
+	if not File.new().file_exists(OPTIONS_FILE_PATH): 
 		var dir:= Directory.new()
-		if not dir.dir_exists("addons/string_keys/.options"):
-			dir.make_dir("addons/string_keys/.options")
-		ResourceSaver.save("addons/string_keys/.options/string_keys_options.tres", StringKeysOptions.new())
-		get_editor_interface().get_resource_filesystem().scan()
-	_options = load("addons/string_keys/.options/string_keys_options.tres")
+		if not dir.dir_exists(OPTIONS_DIRECTORY):
+			dir.make_dir(OPTIONS_DIRECTORY)
+		ResourceSaver.save(OPTIONS_FILE_PATH, StringKeysOptions.new())
+	_options = load(OPTIONS_FILE_PATH)
 	return _options
 
 
