@@ -27,6 +27,7 @@ export(Array, String) var directories_to_ignore:= ([
 	])
 export(Array, String) var locales:= ["en"]
 export var tag_seperator:= "::"
+export var require_tag:= false
 export var remove_unused:= true setget set_remove_unused
 export var modified_files_only:= false setget set_modified_files_only
 export var print_debug_output:= false

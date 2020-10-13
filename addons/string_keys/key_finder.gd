@@ -1,7 +1,14 @@
 class_name SkKeyFinder
 extends Reference
 
+var require_tag: bool
+var tag_seperator: String
+
 var _patterns: Array
+
+func _init(req_tag: bool, tag_sep: String):
+	require_tag = req_tag
+	tag_seperator = tag_sep
 
 
 class Pattern extends Reference:
@@ -104,7 +111,12 @@ func _get_keys_in_text(text: String) -> Array:
 			search_index = suffix_start + pattern.suffix.length()
 			var prefix_end = prefix_start + pattern.prefix.length()
 			var key_length = suffix_start - prefix_end
-			found_keys.append(text.substr(prefix_end, key_length))
+			var key = text.substr(prefix_end, key_length)
+			if require_tag:
+				if key.find(tag_seperator) > -1:
+					found_keys.append(key)
+			else:
+				found_keys.append(key)
 		
 		keep_searching = not pattern_indices.empty()
 	return found_keys

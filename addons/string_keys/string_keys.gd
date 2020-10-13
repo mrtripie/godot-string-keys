@@ -22,7 +22,7 @@ func generate_translation_file(options: StringKeysOptions):
 	if options.modified_files_only:
 		_files_to_search = modified_file_tracker.modified_files
 	
-	var key_finder:= SkKeyFinder.new()
+	var key_finder:= SkKeyFinder.new(options.require_tag, options.tag_seperator)
 	key_finder.compile_patterns(options.patterns_to_search)
 	_keys = key_finder.get_keys_in_files(_files_to_search)
 	
