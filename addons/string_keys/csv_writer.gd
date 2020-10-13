@@ -4,11 +4,11 @@ extends Reference
 var path: String
 var tag_seperator: String
 
+var removed_keys:= [] # not necessary unless printing, could be removed for performance (though not many are likely to be removed)
 var write_successful:= false
 
 var _old_locales: Array
 var _old_keys:= []
-var _removed_keys:= [] # not really nessisary unless printing, could maybe remove
 
 func _init(file_path: String, key_tag_seperator: String):
 	path = file_path
@@ -46,7 +46,7 @@ func write_keys_to_csv_file(keys: Array, locales: Array, remove_unused: bool):
 		var comparision = _old_keys[old_index][0].casecmp_to(keys[new_index])
 		if comparision == -1: #add next old key
 			if (not keys.has(_old_keys[old_index])) and remove_unused:
-				_removed_keys.append(_old_keys[old_index][0])
+				removed_keys.append(_old_keys[old_index][0])
 			else:
 				file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 			old_index += 1
@@ -61,7 +61,7 @@ func write_keys_to_csv_file(keys: Array, locales: Array, remove_unused: bool):
 			print ("Error: StringKeys old key comparison failed")
 	while old_index < _old_keys.size(): #If only old keys left, add old
 		if (not keys.has(_old_keys[old_index])) and remove_unused:
-			_removed_keys.append(_old_keys[old_index][0])
+			removed_keys.append(_old_keys[old_index][0])
 		else:
 			file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 		old_index += 1
