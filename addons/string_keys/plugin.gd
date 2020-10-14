@@ -2,7 +2,7 @@ tool
 extends EditorPlugin
 
 # Make sure these are created in the same order for the index to be correct:
-enum Menu {GENERATE, AUTO_GEN_ON_SAVE, OPTIONS, CLEAR_FILE_MOD_STATE, GITHUB, TUTORIAL}
+enum Menu {GENERATE, AUTO_GEN_ON_SAVE, OPTIONS, CLEAR_FILE_MOD_STATE, GITHUB, DOCUMENTATION, TUTORIAL_VIDEO}
 const OPTIONS_DIRECTORY = "res://addons/string_keys/.options"
 const OPTIONS_FILE_PATH = OPTIONS_DIRECTORY + "/string_keys_options.tres"
 const FILE_MOD_STATE_PATH = "user://string_keys_modification_state.skms"
@@ -20,7 +20,8 @@ func _enter_tree():
 	_popup_menu.add_check_item("Auto On Save")
 	_popup_menu.add_item("Options")
 	_popup_menu.add_item("Clear File Modification State")
-	_popup_menu.add_item("GitHub + Documentation")
+	_popup_menu.add_item("GitHub")
+	_popup_menu.add_item("Documentation")
 	_popup_menu.add_item("Tutorial Video")
 	
 	_popup_menu.connect("index_pressed", self, "on_menu_item_pressed")
@@ -59,7 +60,10 @@ func on_menu_item_pressed(i: int):
 	elif i == Menu.GITHUB:
 		OS.shell_open("https://github.com/mrtripie/godot-string-keys")
 	
-	elif i == Menu.TUTORIAL:
+	elif i == Menu.DOCUMENTATION:
+		OS.shell_open("https://docs.google.com/document/d/176WFKE-2SxA0uWEDP7c8vInO8wChC54EQKv-6F_xb8M/edit?usp=sharing")
+	
+	elif i == Menu.TUTORIAL_VIDEO:
 		#OS.shell_open("https://youtube.com .... ")
 		pass
 
