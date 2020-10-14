@@ -2,9 +2,10 @@ tool
 extends EditorPlugin
 
 # Make sure these are created in the same order for the index to be correct:
-enum {MENU_GENERATE, MENU_AUTO_GEN_ON_SAVE, MENU_OPTIONS, MENU_GITHUB, MENU_TUTORIAL}
+enum Menu {GENERATE, AUTO_GEN_ON_SAVE, OPTIONS, CLEAR_FILE_MOD_STATE, GITHUB, TUTORIAL}
 const OPTIONS_DIRECTORY = "res://addons/string_keys/.options"
 const OPTIONS_FILE_PATH = OPTIONS_DIRECTORY + "/string_keys_options.tres"
+const FILE_MOD_STATE_PATH = "user://string_keys_modification_state.skms"
 
 var _menu_button: MenuButton
 var _popup_menu: PopupMenu
@@ -18,6 +19,7 @@ func _enter_tree():
 	_popup_menu.add_item("Generate Translation File")
 	_popup_menu.add_check_item("Auto On Save")
 	_popup_menu.add_item("Options")
+	_popup_menu.add_item("Clear File Modification State")
 	_popup_menu.add_item("GitHub + Documentation")
 	_popup_menu.add_item("Tutorial Video")
 	
@@ -37,29 +39,34 @@ func _exit_tree():
 
 
 func on_menu_item_pressed(i: int):
-	if i == MENU_GENERATE:
+	if i == Menu.GENERATE:
 		generate_translation_file()
 	
-	elif i == MENU_AUTO_GEN_ON_SAVE:
-		_popup_menu.toggle_item_checked(MENU_AUTO_GEN_ON_SAVE)
+	elif i == Menu.AUTO_GEN_ON_SAVE:
+		_popup_menu.toggle_item_checked(Menu.AUTO_GEN_ON_SAVE)
 	
-	elif i == MENU_OPTIONS:
+	elif i == Menu.OPTIONS:
 		var options:= get_options()
 		# options having a ref to the inspector allows it to interactively correct mistakes
 		options.editor_inspector = get_editor_interface().get_inspector()
 		get_editor_interface().inspect_object(options)
 	
-	elif i == MENU_GITHUB:
+	elif i == Menu.CLEAR_FILE_MOD_STATE:
+		var dir:= Directory.new()
+		if dir.file_exists(FILE_MOD_STATE_PATH):
+			dir.remove(FILE_MOD_STATE_PATH)
+	
+	elif i == Menu.GITHUB:
 		OS.shell_open("https://github.com/mrtripie/godot-string-keys")
 	
-	elif i == MENU_TUTORIAL:
+	elif i == Menu.TUTORIAL:
 		#OS.shell_open("https://youtube.com .... ")
 		pass
 
 
 func auto_gen_on_save(_resource : Resource):
 	print("resource saved")
-	if _popup_menu.is_item_checked(MENU_AUTO_GEN_ON_SAVE):
+	if _popup_menu.is_item_checked(Menu.AUTO_GEN_ON_SAVE):
 		#resource_saved signal is BEFORE the save, waiting until the filesytem has channged
 		#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
 		#work because when it changes the csv file, making it run again
@@ -71,7 +78,7 @@ func auto_gen_on_save(_resource : Resource):
 func generate_translation_file():
 	if _options:
 		ResourceSaver.save(OPTIONS_FILE_PATH, _options)
-	StringKeys.new().generate_translation_file(get_options())
+	StringKeys.new().generate_translation_file(get_options(), FILE_MOD_STATE_PATH)
 	get_editor_interface().get_resource_filesystem().scan() #Triggers reimport of csv file
 
 
@@ -93,7 +100,7 @@ func get_options() -> StringKeysOptions:
 func _save_personal_options():
 	var file = File.new()
 	file.open("user://string_keys_personal_options.skpo", File.WRITE)
-	file.store_var(_popup_menu.is_item_checked(MENU_AUTO_GEN_ON_SAVE))
+	file.store_var(_popup_menu.is_item_checked(Menu.AUTO_GEN_ON_SAVE))
 	file.close()
 
 
@@ -101,5 +108,5 @@ func _load_personal_options():
 	var file = File.new()
 	if file.file_exists("user://string_keys_personal_options.skpo"):
 		file.open("user://string_keys_personal_options.skpo", File.READ)
-		_popup_menu.set_item_checked(MENU_AUTO_GEN_ON_SAVE, file.get_var())
+		_popup_menu.set_item_checked(Menu.AUTO_GEN_ON_SAVE, file.get_var())
 		file.close()
