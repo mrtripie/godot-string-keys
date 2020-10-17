@@ -13,4 +13,4 @@ tag_seperator = "::"
 require_tag = true
 remove_unused = false
 modified_files_only = true
-print_debug_output = true
+print_debug_output = false

@@ -1,7 +1,7 @@
 class_name StringKeys
 extends Reference
 
-var options: StringKeysOptions
+const FILE_MOD_STATE_PATH = "user://string_keys_modification_state.skms"
 
 var _files_to_search:= []
 var _file_hashes:= {} #used to check if a file is modified
@@ -9,7 +9,7 @@ var _keys:= []
 var _old_keys:= [] #keys that were already in .csv file, includes translations in pool array (2D)
 var _removed_keys:= []
 
-func generate_translation_file(options: StringKeysOptions, file_mod_state_path: String):
+func generate_translation_file(options: StringKeysOptions):
 	if not _is_translation_file_path_valid(options.translation_file):
 		print("\nStringKeys ERROR: translation file path invalid")
 		return
@@ -17,7 +17,7 @@ func generate_translation_file(options: StringKeysOptions, file_mod_state_path: 
 	var file_finder:= SkFileFinder.new("res://", options.file_types_to_search, options.directories_to_ignore)
 	_files_to_search = file_finder.find_files()
 	
-	var modified_file_tracker:= SkModifiedFileTracker.new(file_mod_state_path)
+	var modified_file_tracker:= SkModifiedFileTracker.new(FILE_MOD_STATE_PATH)
 	modified_file_tracker.check_for_modifications(_files_to_search)
 	if options.modified_files_only:
 		_files_to_search = modified_file_tracker.modified_files

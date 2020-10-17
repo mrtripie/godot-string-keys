@@ -2,10 +2,9 @@ tool
 extends EditorPlugin
 
 # Make sure these are created in the same order for the index to be correct:
-enum Menu {GENERATE, AUTO_GEN_ON_SAVE, OPTIONS, CLEAR_FILE_MOD_STATE, GITHUB, DOCUMENTATION, TUTORIAL_VIDEO}
+enum Menu {GENERATE, AUTO_GEN_ON_SAVE, OPTIONS, GITHUB, DOCUMENTATION, TUTORIAL_VIDEO}
 const OPTIONS_DIRECTORY = "res://addons/string_keys/.options"
 const OPTIONS_FILE_PATH = OPTIONS_DIRECTORY + "/string_keys_options.tres"
-const FILE_MOD_STATE_PATH = "user://string_keys_modification_state.skms"
 
 var _menu_button: MenuButton
 var _popup_menu: PopupMenu
@@ -19,7 +18,6 @@ func _enter_tree():
 	_popup_menu.add_item("Generate Translation File")
 	_popup_menu.add_check_item("Auto On Save")
 	_popup_menu.add_item("Options")
-	_popup_menu.add_item("Clear File Modification State")
 	_popup_menu.add_item("GitHub")
 	_popup_menu.add_item("Documentation")
 	_popup_menu.add_item("Tutorial Video")
@@ -52,11 +50,6 @@ func on_menu_item_pressed(i: int):
 		options.editor_inspector = get_editor_interface().get_inspector()
 		get_editor_interface().inspect_object(options)
 	
-	elif i == Menu.CLEAR_FILE_MOD_STATE:
-		var dir:= Directory.new()
-		if dir.file_exists(FILE_MOD_STATE_PATH):
-			dir.remove(FILE_MOD_STATE_PATH)
-	
 	elif i == Menu.GITHUB:
 		OS.shell_open("https://github.com/mrtripie/godot-string-keys")
 	
@@ -82,7 +75,7 @@ func auto_gen_on_save(_resource : Resource):
 func generate_translation_file():
 	if _options:
 		ResourceSaver.save(OPTIONS_FILE_PATH, _options)
-	StringKeys.new().generate_translation_file(get_options(), FILE_MOD_STATE_PATH)
+	StringKeys.new().generate_translation_file(get_options())
 	get_editor_interface().get_resource_filesystem().scan() #Triggers reimport of csv file
 
 

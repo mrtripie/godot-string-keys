@@ -25,11 +25,17 @@ func compile_patterns(pattern_strings: Array):
 func _compile_pattern_string(string: String):
 	var prefix_end:= string.find("STR_KEY")
 	if prefix_end == -1:
-		print("StringKeys Error: " + string + " is invalid pattern")
+		print("StringKeys Error: " + string + " is invalid pattern, doesn't include STR_KEY")
 		return
 	var pattern = Pattern.new()
 	pattern.prefix = string.left(prefix_end)
 	pattern.suffix = string.right(prefix_end + 7)
+	if pattern.prefix == "":
+		print("StringKeys Error: " + string + " is invalid pattern, doesn't include prefix")
+		return
+	if pattern.suffix == "":
+		print("StringKeys Error: " + string + " is invalid pattern, doesn't include suffix")
+		return
 	_patterns.append(pattern)
 
 
