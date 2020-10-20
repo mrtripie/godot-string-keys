@@ -5,7 +5,7 @@ StringKeys allows you to automatically generate a .csv translation file from str
 Version 2 (current version) allows for searching for strings by the patterns surrounding them, this allows for it to be used on projects at the end of development, that weren't designed with StringKeys in mind, at the cost of maybe be a little less precise. Patterns can be things such as the property name in a scene or resource, or as the paramteter of a function call (such as Godot's translate function: tr("string")). Its UI is in a dropdown menu so that it is a little less in the way.
 
 
-V2 Latest Release: https://github.com/mrtripie/godot-string-keys/releases/tag/v2_3.2.2
+V2 Latest Release: https://github.com/mrtripie/godot-string-keys/releases/tag/2.0_godot_3.2
 
 V2 Documentation: https://docs.google.com/document/d/176WFKE-2SxA0uWEDP7c8vInO8wChC54EQKv-6F_xb8M/edit?usp=sharing
 
