@@ -57,7 +57,7 @@ func on_menu_item_pressed(i: int):
 		OS.shell_open("https://docs.google.com/document/d/176WFKE-2SxA0uWEDP7c8vInO8wChC54EQKv-6F_xb8M/edit?usp=sharing")
 	
 	elif i == Menu.TUTORIAL_VIDEO:
-		#OS.shell_open("https://youtube.com .... ")
+		OS.shell_open("https://youtu.be/DUSQimX77qE")
 		pass
 
 
