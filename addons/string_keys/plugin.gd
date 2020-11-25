@@ -62,7 +62,6 @@ func on_menu_item_pressed(i: int):
 
 
 func auto_gen_on_save(_resource : Resource):
-	print("resource saved")
 	if _popup_menu.is_item_checked(Menu.AUTO_GEN_ON_SAVE):
 		#resource_saved signal is BEFORE the save, waiting until the filesytem has channged
 		#makes it run after the save. Just using the filesystem_changed signal alone wouldn't
