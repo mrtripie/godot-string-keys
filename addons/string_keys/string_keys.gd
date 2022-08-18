@@ -31,7 +31,7 @@ func generate_translation_file(options: StringKeysOptions):
 		print("\nStringKeys keys found: ", _keys)
 	
 	if _keys.size() > 0 or options.remove_unused:
-		var csv_writer:= SkCsvWriter.new(options.translation_file, options.tag_seperator)
+		var csv_writer:= SkCsvWriter.new(options.translation_file, options.tag_seperator, options.key_is_before_tag)
 		csv_writer.read_old_csv_file()
 		csv_writer.write_keys_to_csv_file(_keys, options.locales, options.remove_unused)
 		if csv_writer.write_successful:

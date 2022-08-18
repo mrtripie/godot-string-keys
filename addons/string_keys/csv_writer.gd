@@ -10,9 +10,12 @@ var write_successful:= false
 var _old_locales: Array
 var _old_keys:= []
 
-func _init(file_path: String, key_tag_seperator: String):
+var _key_is_before_tag:= false
+
+func _init(file_path: String, key_tag_seperator: String, key_is_before_tag: bool):
 	path = file_path
 	tag_seperator = key_tag_seperator
+	_key_is_before_tag = key_is_before_tag
 
 
 func read_old_csv_file():
@@ -43,7 +46,7 @@ func write_keys_to_csv_file(keys: Array, locales: Array, remove_unused: bool):
 	var old_index := 0
 	var new_index := 0
 	while old_index < _old_keys.size() and new_index < keys.size(): #Both left, compare new and old and add in alphabetical order
-		var comparision = _old_keys[old_index][0].casecmp_to(keys[new_index])
+		var comparision = _old_keys[old_index][0].casecmp_to(_key_from_string(keys[new_index]))
 		if comparision == -1: #add next old key
 			if (not keys.has(_old_keys[old_index])) and remove_unused:
 				removed_keys.append(_old_keys[old_index][0])
@@ -51,7 +54,7 @@ func write_keys_to_csv_file(keys: Array, locales: Array, remove_unused: bool):
 				file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 			old_index += 1
 		elif comparision == 1: #add next new key
-			file.store_csv_line([keys[new_index], _text_from_key(keys[new_index])] + _make_filler_strings(2))
+			file.store_csv_line([_key_from_string(keys[new_index]), _text_from_key(keys[new_index])] + _make_filler_strings(2))
 			new_index += 1
 		elif comparision == 0: #keys are equal, skip new and use old to keep manual work
 			file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
@@ -66,7 +69,7 @@ func write_keys_to_csv_file(keys: Array, locales: Array, remove_unused: bool):
 			file.store_csv_line(_old_keys[old_index] + _make_filler_strings(_old_keys[old_index].size()))
 		old_index += 1
 	while new_index < keys.size(): #If only new keys left, add new
-		file.store_csv_line([keys[new_index], _text_from_key(keys[new_index])] + _make_filler_strings(2))
+		file.store_csv_line([_key_from_string(keys[new_index]), _text_from_key(keys[new_index])] + _make_filler_strings(2))
 		new_index += 1
 	file.close()
 	print("StringKeys: Keys saved to .csv file")
@@ -85,6 +88,17 @@ func _make_sure_directory_exists():
 	var dir:= Directory.new()
 	if not dir.dir_exists(path.get_base_dir()):
 		dir.make_dir_recursive(path.get_base_dir())
+
+
+func _key_from_string(key: String) -> String:
+	var tag_index:= key.find(tag_seperator)
+	if tag_index == -1:
+		return key
+	else:
+		if _key_is_before_tag :
+			return key.left(tag_index)
+		else :
+			return key
 
 
 func _text_from_key(key: String) -> String:

@@ -6,6 +6,8 @@ export var translation_file:= "res://localization/translations.csv"
 export(Array, String) var patterns_to_search:= ([
 	"tr(\"STR_KEY\")",
 	"Tr(\"STR_KEY\")",
+	"sktr(\"STR_KEY\")",
+	"sk(\"STR_KEY\")",
 	"text = \"STR_KEY\"",
 	"title = \"STR_KEY\"",
 	"hint_tooltip = \"STR_KEY\"",
@@ -28,6 +30,7 @@ export(Array, String) var directories_to_ignore:= ([
 export(Array, String) var locales:= ["en"]
 export var tag_seperator:= "$$"
 export var require_tag:= false
+export var key_is_before_tag:= false
 export var remove_unused:= true setget set_remove_unused
 export var modified_files_only:= false setget set_modified_files_only
 export var print_debug_output:= false
